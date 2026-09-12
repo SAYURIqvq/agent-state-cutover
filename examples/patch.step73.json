@@ -1,0 +1,16 @@
+{
+  "set": {
+    "task.current_step": 73,
+    "task.status": "running",
+    "infra.server_ip": "10.0.0.8",
+    "task.next": "配置 Nginx 并验证 HTTPS"
+  },
+  "append": {
+    "task.completed": ["服务器部署完成"],
+    "task.pending": ["配置 Nginx", "运行测试"],
+    "notes.completed": ["服务器已部署到 staging。"],
+    "notes.pending": ["Nginx 尚未配置。"],
+    "notes.next": ["验证 HTTPS。"],
+    "notes.important": ["用户明确要求不能修改 production。"]
+  }
+}

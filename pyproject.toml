@@ -1,0 +1,13 @@
+[project]
+name = "hard-context-cutover"
+version = "0.1.0"
+description = "A small reference implementation of hard context cutover for long-running agents."
+requires-python = ">=3.10"
+dependencies = []
+
+[project.scripts]
+hcc-agent = "hard_context_cutover.cli:main"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
