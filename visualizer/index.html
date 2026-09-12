@@ -271,20 +271,20 @@
 
   <div class="header">
     <div>
-      <h1>Hard Context Cutover Flow</h1>
-      <p class="lead">This view shows the actual branches: valid patches merge into State, invalid patches retry, context pressure triggers a checkpoint, and conflicts can trace back into Archive before the next window continues.</p>
+      <h1>硬切上下文流程 / Hard Context Cutover Flow</h1>
+      <p class="lead">这张图展示真实分支：合法补丁写入状态，非法补丁被拒绝重试，上下文快满时生成检查点，状态冲突时回到原始存档追溯证据。 / Valid patches merge into State, invalid patches retry, context pressure triggers a checkpoint, and conflicts trace back into 原始存档 / Archive.</p>
     </div>
     <div class="toolbar">
-      <button type="button" id="hcc-reset">Reset</button>
-      <button type="button" id="hcc-show-fail">Show Failure Branch</button>
-      <button type="button" class="primary" id="hcc-next">Next Highlight</button>
+      <button type="button" id="hcc-reset">重置 / Reset</button>
+      <button type="button" id="hcc-show-fail">显示失败分支 / Show Failure Branch</button>
+      <button type="button" class="primary" id="hcc-next">下一步高亮 / Next Highlight</button>
     </div>
   </div>
 
-  <div class="canvas-wrap" aria-label="Mermaid style hard context cutover flowchart">
+  <div class="canvas-wrap" aria-label="Mermaid 风格的硬切上下文流程图 / Mermaid style hard context cutover flowchart">
     <svg viewBox="0 0 1120 700" role="img" aria-labelledby="flow-title flow-desc">
-      <title id="flow-title">Hard Context Cutover architecture flow</title>
-      <desc id="flow-desc">A branching flowchart showing current context, tool calls, state patch validation, state merge, archive append, checkpoint creation, and new context window continuation.</desc>
+      <title id="flow-title">硬切上下文架构流程 / Hard Context Cutover architecture flow</title>
+      <desc id="flow-desc">分支流程图，展示当前上下文、工具调用、状态补丁校验、状态合并、存档追加、检查点创建和新窗口继续执行。</desc>
       <defs>
         <marker id="arrow" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
           <path d="M 1 1 L 11 6 L 1 11 z" fill="#7d8883"></path>
@@ -306,69 +306,69 @@
       <path class="edge branch" data-edge="pressure-checkpoint" d="M 422 476 V 590 H 632" marker-end="url(#arrow)"></path>
       <path class="edge" data-edge="checkpoint-new" d="M 804 590 H 1010 V 162" marker-end="url(#arrow)"></path>
 
-      <text class="edge-label" x="266" y="98">tool call</text>
-      <text class="edge-label" x="550" y="98">result</text>
-      <text class="edge-label" x="812" y="318">yes</text>
-      <text class="edge-label" x="922" y="214">no / retry</text>
-      <text class="edge-label" x="870" y="398">append evidence</text>
-      <text class="edge-label" x="332" y="575">context near limit</text>
-      <text class="edge-label" x="842" y="578">fresh window</text>
-      <text class="edge-label" x="380" y="540">conflict: retrieve ground truth</text>
+      <text class="edge-label" x="266" y="98">工具调用 / tool call</text>
+      <text class="edge-label" x="550" y="98">结果 / result</text>
+      <text class="edge-label" x="812" y="318">是 / yes</text>
+      <text class="edge-label" x="922" y="214">否 / 重试</text>
+      <text class="edge-label" x="870" y="398">追加证据 / append evidence</text>
+      <text class="edge-label" x="332" y="575">上下文快满 / context near limit</text>
+      <text class="edge-label" x="842" y="578">新窗口 / fresh window</text>
+      <text class="edge-label" x="380" y="540">冲突：回溯原始证据</text>
 
       <g class="flow-node" data-node="window" tabindex="0" style="--node-color: var(--context); --node-tint: #e9f0f8" transform="translate(40 60)">
         <rect class="node-shape" width="170" height="100"></rect>
-        <text class="node-title" x="85" y="40">Current Window</text>
-        <text class="node-subtitle" x="85" y="64">projection + notes</text>
+        <text class="node-title" x="85" y="40">当前窗口 / Current Window</text>
+        <text class="node-subtitle" x="85" y="64">状态投影 + 笔记</text>
       </g>
 
       <g class="flow-node" data-node="tool" tabindex="0" style="--node-color: var(--context); --node-tint: #e9f0f8" transform="translate(338 60)">
         <rect class="node-shape" width="164" height="100"></rect>
-        <text class="node-title" x="82" y="40">Tool / Work</text>
-        <text class="node-subtitle" x="82" y="64">execute one step</text>
+        <text class="node-title" x="82" y="40">工具执行 / Tool Work</text>
+        <text class="node-subtitle" x="82" y="64">执行一步任务</text>
       </g>
 
       <g class="flow-node" data-node="patch" tabindex="0" style="--node-color: var(--patch); --node-tint: #faecee" transform="translate(630 60)">
         <rect class="node-shape" width="165" height="100"></rect>
-        <text class="node-title" x="82.5" y="40">State Patch</text>
-        <text class="node-subtitle" x="82.5" y="64">set / append / unset</text>
+        <text class="node-title" x="82.5" y="40">状态补丁 / State Patch</text>
+        <text class="node-subtitle" x="82.5" y="64">设置 / 追加 / 删除</text>
       </g>
 
       <g class="flow-node" data-node="validate" tabindex="0" style="--node-color: var(--state); --node-tint: #e7f4ef" transform="translate(718 178)">
         <polygon class="node-shape" points="77,0 154,52 77,104 0,52"></polygon>
-        <text class="node-title" x="77" y="48">Valid?</text>
-        <text class="node-subtitle" x="77" y="70">schema + rules</text>
+        <text class="node-title" x="77" y="48">是否合法？ / Valid?</text>
+        <text class="node-subtitle" x="77" y="70">结构约束 + 规则</text>
       </g>
 
       <g class="flow-node" data-node="reject" tabindex="0" style="--node-color: var(--reject); --node-tint: #faebe8" transform="translate(960 60)">
         <rect class="node-shape" width="130" height="100"></rect>
-        <text class="node-title" x="65" y="40">Reject</text>
-        <text class="node-subtitle" x="65" y="64">ask retry</text>
+        <text class="node-title" x="65" y="40">拒绝 / Reject</text>
+        <text class="node-subtitle" x="65" y="64">要求重试</text>
       </g>
 
       <g class="flow-node" data-node="state" tabindex="0" style="--node-color: var(--state); --node-tint: #e7f4ef" transform="translate(710 344)">
         <rect class="node-shape" width="170" height="132"></rect>
-        <text class="node-title" x="85" y="48">Global State</text>
+        <text class="node-title" x="85" y="48">全局状态 / Global State</text>
         <text class="node-subtitle" x="85" y="72">state.json</text>
-        <text class="node-subtitle" x="85" y="94">durable facts</text>
+        <text class="node-subtitle" x="85" y="94">持久化事实</text>
       </g>
 
       <g class="flow-node" data-node="projection" tabindex="0" style="--node-color: var(--checkpoint); --node-tint: #e7f2f6" transform="translate(338 344)">
         <rect class="node-shape" width="170" height="132"></rect>
-        <text class="node-title" x="85" y="48">Projection</text>
-        <text class="node-subtitle" x="85" y="72">minimal fields</text>
-        <text class="node-subtitle" x="85" y="94">for next decision</text>
+        <text class="node-title" x="85" y="48">状态投影 / Projection</text>
+        <text class="node-subtitle" x="85" y="72">最小必要字段</text>
+        <text class="node-subtitle" x="85" y="94">用于下一步决策</text>
       </g>
 
       <g class="flow-node" data-node="archive" tabindex="0" style="--node-color: var(--archive); --node-tint: #eeecf8" transform="translate(880 512)">
         <rect class="node-shape" width="170" height="100"></rect>
-        <text class="node-title" x="85" y="40">Archive</text>
+        <text class="node-title" x="85" y="40">原始存档 / Archive</text>
         <text class="node-subtitle" x="85" y="64">archive.jsonl</text>
       </g>
 
       <g class="flow-node" data-node="checkpoint" tabindex="0" style="--node-color: var(--checkpoint); --node-tint: #e7f2f6" transform="translate(632 540)">
         <rect class="node-shape" width="172" height="100"></rect>
-        <text class="node-title" x="86" y="40">Checkpoint</text>
-        <text class="node-subtitle" x="86" y="64">cutover bundle</text>
+        <text class="node-title" x="86" y="40">检查点 / Checkpoint</text>
+        <text class="node-subtitle" x="86" y="64">切换启动包</text>
       </g>
 
       <g class="flow-node" data-node="new-window" tabindex="0" style="--node-color: var(--context); --node-tint: #e9f0f8" transform="translate(940 60)">
@@ -378,32 +378,32 @@
   </div>
 
   <div class="legend" aria-label="Flow legend">
-    <span><i class="swatch" style="--c: var(--context)"></i>context window</span>
-    <span><i class="swatch" style="--c: var(--patch)"></i>model mutation</span>
-    <span><i class="swatch" style="--c: var(--state)"></i>validated state</span>
-    <span><i class="swatch" style="--c: var(--archive)"></i>raw evidence</span>
-    <span><i class="swatch" style="--c: var(--checkpoint)"></i>cutover path</span>
+    <span><i class="swatch" style="--c: var(--context)"></i>上下文窗口 / context window</span>
+    <span><i class="swatch" style="--c: var(--patch)"></i>模型状态变更 / model mutation</span>
+    <span><i class="swatch" style="--c: var(--state)"></i>已校验状态 / validated state</span>
+    <span><i class="swatch" style="--c: var(--archive)"></i>原始证据 / raw evidence</span>
+    <span><i class="swatch" style="--c: var(--checkpoint)"></i>切换路径 / cutover path</span>
   </div>
 
   <div class="details">
-    <div class="step-list" id="hcc-step-list" aria-label="Flow steps"></div>
+    <div class="step-list" id="hcc-step-list" aria-label="流程步骤 / Flow steps"></div>
     <div class="inspector">
-      <h2 id="hcc-title">Current Window</h2>
+      <h2 id="hcc-title">当前窗口 / Current Window</h2>
       <div class="inspector-grid">
         <div class="box state">
-          <h3>Main Idea</h3>
+          <h3>核心含义 / Main Idea</h3>
           <pre id="hcc-main"></pre>
         </div>
         <div class="box patch">
-          <h3>Patch / Rule</h3>
+          <h3>补丁 / 规则</h3>
           <pre id="hcc-patch"></pre>
         </div>
         <div class="box note">
-          <h3>State + Note</h3>
+          <h3>状态 + 笔记</h3>
           <pre id="hcc-state"></pre>
         </div>
         <div class="box archive">
-          <h3>Archive / Checkpoint</h3>
+          <h3>原始存档 / Archive / 检查点 / Checkpoint</h3>
           <pre id="hcc-archive"></pre>
         </div>
       </div>
@@ -424,13 +424,13 @@
 
       const views = {
         window: {
-          title: "Current Window",
+          title: "当前窗口 / Current Window",
           edges: ["window-tool"],
           main: {
-            role: "The model only sees a compact working context.",
-            loaded: ["state projection", "notes", "recent archive pointers"]
+            role: "模型只看到精简工作上下文 / The model only sees a compact working context.",
+            loaded: ["状态投影 / state projection", "笔记 / notes", "最近存档指针 / recent archive pointers"]
           },
-          patch: "No state write yet.",
+          patch: "还没有写状态 / No state write yet.",
           state: {
             "task.current_step": 72,
             "task.environment": "staging",
@@ -439,34 +439,34 @@
           },
           archive: {
             loaded_by_default: false,
-            reason: "Archive is retrieved only when evidence is needed."
+            reason: "默认不加载 Archive，只有需要证据时才检索 / Archive is retrieved only when evidence is needed."
           }
         },
         tool: {
-          title: "Tool / Work",
+          title: "工具执行 / Tool Work",
           edges: ["tool-patch", "state-archive"],
           main: {
-            action: "Run one bounded unit of work.",
-            example: "Deploy server to staging."
+            action: "执行一个边界清楚的小步骤 / Run one bounded unit of work.",
+            example: "把服务器部署到 staging / Deploy server to staging."
           },
           patch: {
-            tool_result: {
+            "工具结果 / tool_result": {
               ok: true,
               server_ip: "10.0.0.8"
             }
           },
           state: {
-            unchanged_until_patch_commits: true
+            "提交 patch 前状态不变 / unchanged_until_patch_commits": true
           },
           archive: {
             kind: "tool.result",
-            payload: "server deployment completed on staging"
+            payload: "服务器部署到 staging 成功 / server deployment completed on staging"
           }
         },
         patch: {
-          title: "State Patch",
+          title: "状态补丁 / State Patch",
           edges: ["patch-validate"],
-          main: "The model proposes minimal mutation instead of rewriting the full State.",
+          main: "模型只提出最小变更，而不是重写完整 State / The model proposes minimal mutation instead of rewriting the full State.",
           patch: {
             set: {
               "task.current_step": 73,
@@ -479,59 +479,59 @@
             },
             unset: []
           },
-          state: "Not committed yet.",
-          archive: "Patch will be archived after validation succeeds."
+          state: "尚未提交 / Not committed yet.",
+          archive: "校验成功后才写入 Archive / Patch will be archived after validation succeeds."
         },
         validate: {
-          title: "Schema Validation",
+          title: "结构校验 / Schema Validation",
           edges: ["validate-state", "validate-reject"],
-          main: "This is the key branch: valid patches commit, invalid patches are rejected and retried.",
+          main: "这是关键分支：合法 patch 提交，非法 patch 拒绝并重试 / Valid patches commit, invalid patches are rejected and retried.",
           patch: {
             checks: [
-              "field exists in schema",
-              "value type is valid",
-              "enum value is allowed",
-              "one field appears in only one operation"
+              "字段必须在 schema 中声明 / field exists in schema",
+              "值类型必须正确 / value type is valid",
+              "枚举值必须允许 / enum value is allowed",
+              "同一字段只能出现在一种操作里 / one field appears in only one operation"
             ]
           },
           state: {
-            yes: "merge into Global State",
-            no: "reject patch and ask model to retry"
+            "是 / yes": "合并进全局状态 / merge into Global State",
+            "否 / no": "拒绝 patch 并要求模型重试 / reject patch and ask model to retry"
           },
           archive: {
-            failure_example: {
+            "失败例子 / failure_example": {
               set: {
                 "task.current_step": "不知道"
               },
-              result: "rejected: current_step must be int"
+              "结果 / result": "被拒绝：current_step 必须是 int / rejected: current_step must be int"
             }
           }
         },
         reject: {
-          title: "Reject / Retry",
+          title: "拒绝重试 / Reject Retry",
           edges: ["validate-reject", "patch-validate"],
-          main: "Invalid state writes do not mutate durable State.",
+          main: "非法状态写入不会改变持久化 State / Invalid state writes do not mutate durable State.",
           patch: {
-            rejected_patch: {
+            "被拒绝的 patch / rejected_patch": {
               set: {
                 "made_up.field": "oops"
               }
             },
-            reason: "field is not declared in schema"
+            "原因 / reason": "字段未在 schema 声明 / field is not declared in schema"
           },
           state: {
-            unchanged: true,
+            "状态保持不变 / unchanged": true,
             current_step: 72
           },
           archive: {
-            optional_event: "tool.error or patch.rejected"
+            "可选记录 / optional_event": "tool.error 或 patch.rejected"
           }
         },
         state: {
-          title: "Global State",
+          title: "全局状态 / Global State",
           edges: ["validate-state", "state-project", "state-archive", "state-conflict"],
-          main: "Validated patches become durable current facts.",
-          patch: "Patch committed.",
+          main: "通过校验的 patch 会成为持久化当前事实 / Validated patches become durable current facts.",
+          patch: "Patch 已提交 / Patch committed.",
           state: {
             "task.current_step": 73,
             "task.environment": "staging",
@@ -546,16 +546,16 @@
           },
           archive: {
             kind: "state.patch",
-            stored_as: "append-only JSONL event"
+            stored_as: "追加式 JSONL 事件 / append-only JSONL event"
           }
         },
         projection: {
-          title: "State Projection",
+          title: "状态投影 / State Projection",
           edges: ["state-project", "project-window", "pressure-checkpoint"],
-          main: "The next model call receives only fields needed for the current decision.",
-          patch: "Projection is read-only.",
+          main: "下一次模型调用只拿当前决策需要的字段 / The next model call receives only fields needed for the current decision.",
+          patch: "Projection 是只读的 / Projection is read-only.",
           state: {
-            selected_fields: [
+            "选中的字段 / selected_fields": [
               "task.current_step",
               "task.environment",
               "infra.server_ip",
@@ -564,19 +564,19 @@
             ]
           },
           archive: {
-            context_pressure: "If the window is near its limit, create a checkpoint instead of summarizing everything."
+            "上下文压力 / context_pressure": "窗口快满时创建 checkpoint，而不是总结所有历史 / create a checkpoint instead of summarizing everything."
           }
         },
         archive: {
-          title: "Archive",
+          title: "原始存档 / Archive",
           edges: ["state-archive", "state-conflict"],
-          main: "Archive keeps ground truth outside the normal prompt.",
-          patch: "No direct state mutation.",
+          main: "Archive 把原始事实保存在普通 prompt 之外 / Archive keeps ground truth outside the normal prompt.",
+          patch: "不直接修改 State / No direct state mutation.",
           state: {
-            retrieved_when: [
-              "state conflict",
-              "missing fact",
-              "audit or repair needed"
+            "什么时候检索 / retrieved_when": [
+              "状态冲突 / state conflict",
+              "缺少事实 / missing fact",
+              "需要审计或修复 / audit or repair needed"
             ]
           },
           archive: {
@@ -585,10 +585,10 @@
           }
         },
         checkpoint: {
-          title: "Checkpoint",
+          title: "检查点 / Checkpoint",
           edges: ["pressure-checkpoint", "checkpoint-new"],
-          main: "Hard cutover starts a fresh context from a structured bundle.",
-          patch: "No lossy summary of the old window is required.",
+          main: "硬切窗口用结构化 bundle 启动新上下文 / Hard cutover starts a fresh context from a structured bundle.",
+          patch: "不需要对旧窗口做有损摘要 / No lossy summary of the old window is required.",
           state: {
             state_projection: {
               "task.current_step": 73,
@@ -603,7 +603,7 @@
           },
           archive: {
             recent_archive_events: ["tool.result", "state.patch"],
-            next_window: "continues from checkpoint"
+            "新窗口 / next_window": "从 checkpoint 继续 / continues from checkpoint"
           }
         }
       };
