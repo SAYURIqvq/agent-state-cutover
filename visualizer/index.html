@@ -117,8 +117,9 @@
 
     #agent-cutover-flow .edge-label {
       fill: var(--muted);
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 650;
+      text-anchor: middle;
     }
 
     #agent-cutover-flow .flow-node {
@@ -202,6 +203,20 @@
       display: block;
       text-align: left;
       width: 100%;
+    }
+
+    #agent-cutover-flow .step-button strong {
+      display: block;
+      font-size: 13px;
+      line-height: 1.35;
+      margin-bottom: 4px;
+    }
+
+    #agent-cutover-flow .step-button span {
+      color: var(--muted);
+      display: block;
+      font-size: 12px;
+      line-height: 1.35;
     }
 
     #agent-cutover-flow .inspector-grid {
@@ -306,14 +321,14 @@
       <path class="edge branch" data-edge="pressure-checkpoint" d="M 385 476 V 608 H 520" marker-end="url(#arrow)"></path>
       <path class="edge" data-edge="checkpoint-new" d="M 675 608 H 875 V 172" marker-end="url(#arrow)"></path>
 
-      <text class="edge-label" x="218" y="98">工具调用 / tool call</text>
-      <text class="edge-label" x="456" y="98">结果 / result</text>
-      <text class="edge-label" x="618" y="318">是 / yes</text>
-      <text class="edge-label" x="720" y="214">否 / 重试</text>
-      <text class="edge-label" x="790" y="398">追加证据 / append evidence</text>
-      <text class="edge-label" x="300" y="592">上下文快满 / context near limit</text>
-      <text class="edge-label" x="700" y="596">新窗口 / fresh window</text>
-      <text class="edge-label" x="330" y="540">冲突：回溯原始证据</text>
+      <text class="edge-label" x="234" y="96">1</text>
+      <text class="edge-label" x="476" y="96">2</text>
+      <text class="edge-label" x="624" y="318">是</text>
+      <text class="edge-label" x="748" y="214">否</text>
+      <text class="edge-label" x="828" y="398">存档</text>
+      <text class="edge-label" x="454" y="592">快满</text>
+      <text class="edge-label" x="750" y="596">新窗口</text>
+      <text class="edge-label" x="420" y="540">回溯</text>
 
       <g class="flow-node" data-node="window" tabindex="0" style="--node-color: var(--context); --node-tint: #e9f0f8" transform="translate(30 60)">
         <rect class="node-shape" width="160" height="100"></rect>
@@ -434,6 +449,7 @@
       const views = {
         window: {
           title: "当前窗口 / Current Window",
+          short: "读取投影和笔记 / Read projection and notes",
           edges: ["window-tool"],
           main: {
             role: "模型只看到精简工作上下文 / The model only sees a compact working context.",
@@ -453,6 +469,7 @@
         },
         tool: {
           title: "工具执行 / Tool Work",
+          short: "执行一步任务 / Execute one bounded step",
           edges: ["tool-patch", "state-archive"],
           main: {
             action: "执行一个边界清楚的小步骤 / Run one bounded unit of work.",
@@ -474,6 +491,7 @@
         },
         patch: {
           title: "状态补丁 / State Patch",
+          short: "只描述本轮变化 / Describe only this round's changes",
           edges: ["patch-validate"],
           main: "模型只提出最小变更，而不是重写完整 State / The model proposes minimal mutation instead of rewriting the full State.",
           patch: {
@@ -493,6 +511,7 @@
         },
         validate: {
           title: "结构校验 / Schema Validation",
+          short: "合法写入，非法重试 / Commit valid, retry invalid",
           edges: ["validate-state", "validate-reject"],
           main: "这是关键分支：合法 patch 提交，非法 patch 拒绝并重试 / Valid patches commit, invalid patches are rejected and retried.",
           patch: {
@@ -518,6 +537,7 @@
         },
         reject: {
           title: "拒绝重试 / Reject Retry",
+          short: "状态不变，要求重写 / Keep state unchanged",
           edges: ["validate-reject", "patch-validate"],
           main: "非法状态写入不会改变持久化 State / Invalid state writes do not mutate durable State.",
           patch: {
@@ -538,6 +558,7 @@
         },
         state: {
           title: "全局状态 / Global State",
+          short: "持久化当前事实 / Persist current facts",
           edges: ["validate-state", "state-project", "state-archive", "state-conflict"],
           main: "通过校验的 patch 会成为持久化当前事实 / Validated patches become durable current facts.",
           patch: "Patch 已提交 / Patch committed.",
@@ -560,6 +581,7 @@
         },
         projection: {
           title: "状态投影 / State Projection",
+          short: "挑选必要字段 / Select necessary fields",
           edges: ["state-project", "project-window", "pressure-checkpoint"],
           main: "下一次模型调用只拿当前决策需要的字段 / The next model call receives only fields needed for the current decision.",
           patch: "Projection 是只读的 / Projection is read-only.",
@@ -578,6 +600,7 @@
         },
         archive: {
           title: "原始存档 / Archive",
+          short: "保留原始证据 / Keep raw evidence",
           edges: ["state-archive", "state-conflict"],
           main: "Archive 把原始事实保存在普通 prompt 之外 / Archive keeps ground truth outside the normal prompt.",
           patch: "不直接修改 State / No direct state mutation.",
@@ -595,6 +618,7 @@
         },
         checkpoint: {
           title: "检查点 / Checkpoint",
+          short: "启动新窗口 / Start fresh window",
           edges: ["pressure-checkpoint", "checkpoint-new"],
           main: "硬切窗口用结构化 bundle 启动新上下文 / Hard cutover starts a fresh context from a structured bundle.",
           patch: "不需要对旧窗口做有损摘要 / No lossy summary of the old window is required.",
@@ -637,7 +661,7 @@
           const button = document.createElement("button");
           button.type = "button";
           button.className = "step-button";
-          button.textContent = view.title;
+          button.innerHTML = "<strong>" + view.title + "</strong><span>" + view.short + "</span>";
           button.setAttribute("aria-pressed", String(key === active));
           button.addEventListener("click", () => setActive(key));
           stepList.appendChild(button);
