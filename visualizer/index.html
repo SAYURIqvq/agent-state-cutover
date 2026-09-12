@@ -127,9 +127,27 @@
       stroke-width: 2;
     }
 
+    #agent-diagram .detail-box {
+      fill: #f4f7f5;
+      stroke: #cbd6d1;
+      stroke-width: 1.5;
+    }
+
+    #agent-diagram .detail-title {
+      fill: var(--ink);
+      font-size: 13px;
+      font-weight: 750;
+    }
+
+    #agent-diagram .detail-text {
+      fill: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
     #agent-diagram .legend {
       display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
       gap: 10px;
       margin-top: 16px;
     }
@@ -167,11 +185,11 @@
 
   <div class="header">
     <h1>长程 Agent 硬切上下文架构</h1>
-    <p class="lead">这版按你笔记里的图来画：上半部分是 Agent 每一轮怎么从状态投影开始执行，并把结果写回 State 和 Archive；下半部分是 Context 快满后，旧窗口如何生成 Checkpoint，再切到新窗口继续。</p>
+    <p class="lead">这版按你笔记里的图来画：主箭头表示流程，旁边的小框补充每一步到底存什么、校验什么、下一窗口拿到什么。它不是把历史摘要搬过去，而是把可执行事实写到外部状态里。</p>
   </div>
 
   <div class="canvas">
-    <svg viewBox="0 0 920 1280" role="img" aria-label="长程 Agent 的硬切上下文架构图">
+    <svg viewBox="0 0 1040 1390" role="img" aria-label="长程 Agent 的硬切上下文架构图">
       <defs>
         <marker id="arrow" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="9" markerHeight="9" orient="auto">
           <path d="M 1 1 L 11 6 L 1 11 z" fill="#5f6b66"></path>
@@ -209,6 +227,13 @@
         <text class="zh" x="130" y="34">当前最小状态</text>
         <text class="en" x="130" y="58">Minimal Current State</text>
       </g>
+      <g transform="translate(650 292)">
+        <rect class="detail-box" width="265" height="108"></rect>
+        <text class="detail-title" x="16" y="24">State Projection 里放什么？</text>
+        <text class="detail-text" x="16" y="48">current_step = 73</text>
+        <text class="detail-text" x="16" y="68">environment = staging</text>
+        <text class="detail-text" x="16" y="88">constraints = 禁止修改 production</text>
+      </g>
       <path class="arrow" d="M 460 386 V 428" marker-end="url(#arrow)"></path>
 
       <g class="node" style="--c: var(--agent)" transform="translate(360 428)">
@@ -234,12 +259,26 @@
         <text class="zh" x="130" y="34">状态补丁</text>
         <text class="en" x="130" y="58">State Patch</text>
       </g>
+      <g transform="translate(725 520)">
+        <rect class="detail-box" width="285" height="100"></rect>
+        <text class="detail-title" x="16" y="24">Patch 示例</text>
+        <text class="detail-text" x="16" y="48">set: current_step = 73</text>
+        <text class="detail-text" x="16" y="68">set: server_ip = 10.0.0.8</text>
+        <text class="detail-text" x="16" y="88">append: completed += 部署完成</text>
+      </g>
 
       <path class="arrow patch" d="M 670 718 V 770" marker-end="url(#arrow-patch)"></path>
       <g class="node" style="--c: var(--patch)" transform="translate(540 770)">
         <rect width="260" height="84"></rect>
         <text class="zh" x="130" y="34">结构校验</text>
         <text class="en" x="130" y="58">Schema Validation</text>
+      </g>
+      <g transform="translate(725 760)">
+        <rect class="detail-box" width="285" height="96"></rect>
+        <text class="detail-title" x="16" y="24">校验什么？</text>
+        <text class="detail-text" x="16" y="48">字段必须存在于 Schema</text>
+        <text class="detail-text" x="16" y="68">类型必须正确：step 是 int</text>
+        <text class="detail-text" x="16" y="88">非法 patch 直接 reject / retry</text>
       </g>
 
       <path class="arrow patch" d="M 670 854 V 906" marker-end="url(#arrow-patch)"></path>
@@ -256,6 +295,14 @@
         <text class="zh" x="130" y="34">原始存档</text>
         <text class="en" x="130" y="58">Archive</text>
       </g>
+      <g transform="translate(690 1002)">
+        <rect class="detail-box" width="300" height="110"></rect>
+        <text class="detail-title" x="16" y="24">Archive 保存原始证据</text>
+        <text class="detail-text" x="16" y="48">user.message / 用户原话</text>
+        <text class="detail-text" x="16" y="68">tool.result / 工具返回</text>
+        <text class="detail-text" x="16" y="88">state.patch / 状态补丁</text>
+        <text class="detail-text" x="16" y="108">error.log / 失败日志</text>
+      </g>
 
       <g transform="translate(95 790)">
         <rect class="note-box" width="310" height="116"></rect>
@@ -265,7 +312,7 @@
         <text class="small" x="155" y="102">已完成 / 待完成 / 下一步</text>
       </g>
 
-      <line x1="80" y1="1138" x2="840" y2="1138" stroke="#ded8ca" stroke-width="2"></line>
+      <line x1="80" y1="1138" x2="960" y2="1138" stroke="#ded8ca" stroke-width="2"></line>
       <text class="section-title" x="460" y="1180">二、窗口快满后的硬切 / Hard Cutover</text>
 
       <g class="node" style="--c: var(--cut)" transform="translate(55 1212)">
@@ -294,10 +341,17 @@
         <text class="zh" x="112.5" y="24">New Context</text>
         <text class="en" x="112.5" y="44">加载 State + Note 继续</text>
       </g>
+      <g transform="translate(245 1302)">
+        <rect class="detail-box" width="550" height="72"></rect>
+        <text class="detail-title" x="18" y="25">Checkpoint 交给新窗口的不是 Summary，而是启动包</text>
+        <text class="detail-text" x="18" y="49">state_projection + notes + recent_archive_event_ids</text>
+        <text class="detail-text" x="18" y="66">新窗口据此知道：现在做到哪、有哪些约束、下一步做什么。</text>
+      </g>
     </svg>
   </div>
 
   <div class="legend">
+    <div style="--c: var(--line)"><strong>怎么读图</strong>黑色主线是执行流，红色是 Patch 写状态，紫色是 Archive 归档，蓝色是窗口硬切。</div>
     <div style="--c: var(--agent)"><strong>Agent / LLM</strong>负责推理和工具调用。</div>
     <div style="--c: var(--state)"><strong>State</strong>保存下一步决策必须知道的事实。</div>
     <div style="--c: var(--patch)"><strong>State Patch</strong>只描述本轮发生的最小状态变化。</div>
