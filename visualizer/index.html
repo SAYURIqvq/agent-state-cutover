@@ -90,12 +90,12 @@
     #agent-cutover-flow .canvas-wrap {
       background: #fffdf7;
       border: 1px solid #ded8ca;
-      overflow: auto;
+      overflow: hidden;
     }
 
     #agent-cutover-flow svg {
       display: block;
-      min-width: 980px;
+      max-width: 100%;
       width: 100%;
       height: auto;
     }
@@ -272,7 +272,7 @@
   <div class="header">
     <div>
       <h1>硬切上下文流程 / Hard Context Cutover Flow</h1>
-      <p class="lead">这张图展示真实分支：合法补丁写入状态，非法补丁被拒绝重试，上下文快满时生成检查点，状态冲突时回到原始存档追溯证据。 / Valid patches merge into State, invalid patches retry, context pressure triggers a checkpoint, and conflicts trace back into 原始存档 / Archive.</p>
+      <p class="lead">这张图展示真实分支：合法补丁写入状态，非法补丁被拒绝重试，上下文快满时生成检查点，状态冲突时回到原始存档追溯证据。 / Valid patches merge into State, invalid patches retry, context pressure triggers a checkpoint, and conflicts trace back into Archive.</p>
     </div>
     <div class="toolbar">
       <button type="button" id="hcc-reset">重置 / Reset</button>
@@ -282,7 +282,7 @@
   </div>
 
   <div class="canvas-wrap" aria-label="Mermaid 风格的硬切上下文流程图 / Mermaid style hard context cutover flowchart">
-    <svg viewBox="0 0 1120 700" role="img" aria-labelledby="flow-title flow-desc">
+    <svg viewBox="0 0 960 720" role="img" aria-labelledby="flow-title flow-desc">
       <title id="flow-title">硬切上下文架构流程 / Hard Context Cutover architecture flow</title>
       <desc id="flow-desc">分支流程图，展示当前上下文、工具调用、状态补丁校验、状态合并、存档追加、检查点创建和新窗口继续执行。</desc>
       <defs>
@@ -294,84 +294,93 @@
         </marker>
       </defs>
 
-      <path class="edge" data-edge="window-tool" d="M 210 110 H 338" marker-end="url(#arrow)"></path>
-      <path class="edge" data-edge="tool-patch" d="M 502 110 H 630" marker-end="url(#arrow)"></path>
-      <path class="edge" data-edge="patch-validate" d="M 795 110 V 174" marker-end="url(#arrow)"></path>
-      <path class="edge" data-edge="validate-state" d="M 795 278 V 344" marker-end="url(#arrow)"></path>
-      <path class="edge" data-edge="state-project" d="M 710 410 H 508" marker-end="url(#arrow)"></path>
-      <path class="edge" data-edge="project-window" d="M 338 410 H 250 C 176 410 110 350 110 276 V 172" marker-end="url(#arrow)"></path>
-      <path class="edge" data-edge="state-archive" d="M 880 410 H 965 V 512" marker-end="url(#arrow)"></path>
-      <path class="edge branch" data-edge="validate-reject" d="M 880 226 H 990 V 110 H 960" marker-end="url(#arrow)"></path>
-      <path class="edge branch" data-edge="state-conflict" d="M 795 476 V 552 H 310 V 484" marker-end="url(#arrow)"></path>
-      <path class="edge branch" data-edge="pressure-checkpoint" d="M 422 476 V 590 H 632" marker-end="url(#arrow)"></path>
-      <path class="edge" data-edge="checkpoint-new" d="M 804 590 H 1010 V 162" marker-end="url(#arrow)"></path>
+      <path class="edge" data-edge="window-tool" d="M 190 110 H 278" marker-end="url(#arrow)"></path>
+      <path class="edge" data-edge="tool-patch" d="M 432 110 H 520" marker-end="url(#arrow)"></path>
+      <path class="edge" data-edge="patch-validate" d="M 600 110 V 174" marker-end="url(#arrow)"></path>
+      <path class="edge" data-edge="validate-state" d="M 600 278 V 344" marker-end="url(#arrow)"></path>
+      <path class="edge" data-edge="state-project" d="M 655 410 H 465" marker-end="url(#arrow)"></path>
+      <path class="edge" data-edge="project-window" d="M 305 410 H 210 C 134 410 95 350 95 276 V 172" marker-end="url(#arrow)"></path>
+      <path class="edge" data-edge="state-archive" d="M 805 410 H 850 V 512" marker-end="url(#arrow)"></path>
+      <path class="edge branch" data-edge="validate-reject" d="M 680 226 H 840 V 110 H 815" marker-end="url(#arrow)"></path>
+      <path class="edge branch" data-edge="state-conflict" d="M 730 476 V 552 H 275 V 484" marker-end="url(#arrow)"></path>
+      <path class="edge branch" data-edge="pressure-checkpoint" d="M 385 476 V 608 H 520" marker-end="url(#arrow)"></path>
+      <path class="edge" data-edge="checkpoint-new" d="M 675 608 H 875 V 172" marker-end="url(#arrow)"></path>
 
-      <text class="edge-label" x="266" y="98">工具调用 / tool call</text>
-      <text class="edge-label" x="550" y="98">结果 / result</text>
-      <text class="edge-label" x="812" y="318">是 / yes</text>
-      <text class="edge-label" x="922" y="214">否 / 重试</text>
-      <text class="edge-label" x="870" y="398">追加证据 / append evidence</text>
-      <text class="edge-label" x="332" y="575">上下文快满 / context near limit</text>
-      <text class="edge-label" x="842" y="578">新窗口 / fresh window</text>
-      <text class="edge-label" x="380" y="540">冲突：回溯原始证据</text>
+      <text class="edge-label" x="218" y="98">工具调用 / tool call</text>
+      <text class="edge-label" x="456" y="98">结果 / result</text>
+      <text class="edge-label" x="618" y="318">是 / yes</text>
+      <text class="edge-label" x="720" y="214">否 / 重试</text>
+      <text class="edge-label" x="790" y="398">追加证据 / append evidence</text>
+      <text class="edge-label" x="300" y="592">上下文快满 / context near limit</text>
+      <text class="edge-label" x="700" y="596">新窗口 / fresh window</text>
+      <text class="edge-label" x="330" y="540">冲突：回溯原始证据</text>
 
-      <g class="flow-node" data-node="window" tabindex="0" style="--node-color: var(--context); --node-tint: #e9f0f8" transform="translate(40 60)">
-        <rect class="node-shape" width="170" height="100"></rect>
-        <text class="node-title" x="85" y="40">当前窗口 / Current Window</text>
-        <text class="node-subtitle" x="85" y="64">状态投影 + 笔记</text>
+      <g class="flow-node" data-node="window" tabindex="0" style="--node-color: var(--context); --node-tint: #e9f0f8" transform="translate(30 60)">
+        <rect class="node-shape" width="160" height="100"></rect>
+        <text class="node-title" x="80" y="34">当前窗口</text>
+        <text class="node-subtitle" x="80" y="56">Current Window</text>
+        <text class="node-subtitle" x="80" y="76">状态投影 + 笔记</text>
       </g>
 
-      <g class="flow-node" data-node="tool" tabindex="0" style="--node-color: var(--context); --node-tint: #e9f0f8" transform="translate(338 60)">
-        <rect class="node-shape" width="164" height="100"></rect>
-        <text class="node-title" x="82" y="40">工具执行 / Tool Work</text>
-        <text class="node-subtitle" x="82" y="64">执行一步任务</text>
+      <g class="flow-node" data-node="tool" tabindex="0" style="--node-color: var(--context); --node-tint: #e9f0f8" transform="translate(278 60)">
+        <rect class="node-shape" width="154" height="100"></rect>
+        <text class="node-title" x="77" y="34">工具执行</text>
+        <text class="node-subtitle" x="77" y="56">Tool Work</text>
+        <text class="node-subtitle" x="77" y="76">执行一步任务</text>
       </g>
 
-      <g class="flow-node" data-node="patch" tabindex="0" style="--node-color: var(--patch); --node-tint: #faecee" transform="translate(630 60)">
-        <rect class="node-shape" width="165" height="100"></rect>
-        <text class="node-title" x="82.5" y="40">状态补丁 / State Patch</text>
-        <text class="node-subtitle" x="82.5" y="64">设置 / 追加 / 删除</text>
+      <g class="flow-node" data-node="patch" tabindex="0" style="--node-color: var(--patch); --node-tint: #faecee" transform="translate(520 60)">
+        <rect class="node-shape" width="160" height="100"></rect>
+        <text class="node-title" x="80" y="34">状态补丁</text>
+        <text class="node-subtitle" x="80" y="56">State Patch</text>
+        <text class="node-subtitle" x="80" y="76">设置 / 追加 / 删除</text>
       </g>
 
-      <g class="flow-node" data-node="validate" tabindex="0" style="--node-color: var(--state); --node-tint: #e7f4ef" transform="translate(718 178)">
+      <g class="flow-node" data-node="validate" tabindex="0" style="--node-color: var(--state); --node-tint: #e7f4ef" transform="translate(523 178)">
         <polygon class="node-shape" points="77,0 154,52 77,104 0,52"></polygon>
-        <text class="node-title" x="77" y="48">是否合法？ / Valid?</text>
-        <text class="node-subtitle" x="77" y="70">结构约束 + 规则</text>
+        <text class="node-title" x="77" y="42">是否合法？</text>
+        <text class="node-subtitle" x="77" y="62">Valid?</text>
+        <text class="node-subtitle" x="77" y="80">结构约束 + 规则</text>
       </g>
 
-      <g class="flow-node" data-node="reject" tabindex="0" style="--node-color: var(--reject); --node-tint: #faebe8" transform="translate(960 60)">
-        <rect class="node-shape" width="130" height="100"></rect>
-        <text class="node-title" x="65" y="40">拒绝 / Reject</text>
-        <text class="node-subtitle" x="65" y="64">要求重试</text>
+      <g class="flow-node" data-node="reject" tabindex="0" style="--node-color: var(--reject); --node-tint: #faebe8" transform="translate(815 60)">
+        <rect class="node-shape" width="115" height="100"></rect>
+        <text class="node-title" x="57.5" y="38">拒绝</text>
+        <text class="node-subtitle" x="57.5" y="60">Reject</text>
+        <text class="node-subtitle" x="57.5" y="78">要求重试</text>
       </g>
 
-      <g class="flow-node" data-node="state" tabindex="0" style="--node-color: var(--state); --node-tint: #e7f4ef" transform="translate(710 344)">
-        <rect class="node-shape" width="170" height="132"></rect>
-        <text class="node-title" x="85" y="48">全局状态 / Global State</text>
-        <text class="node-subtitle" x="85" y="72">state.json</text>
-        <text class="node-subtitle" x="85" y="94">持久化事实</text>
+      <g class="flow-node" data-node="state" tabindex="0" style="--node-color: var(--state); --node-tint: #e7f4ef" transform="translate(655 344)">
+        <rect class="node-shape" width="150" height="132"></rect>
+        <text class="node-title" x="75" y="42">全局状态</text>
+        <text class="node-subtitle" x="75" y="64">Global State</text>
+        <text class="node-subtitle" x="75" y="86">state.json</text>
+        <text class="node-subtitle" x="75" y="108">持久化事实</text>
       </g>
 
-      <g class="flow-node" data-node="projection" tabindex="0" style="--node-color: var(--checkpoint); --node-tint: #e7f2f6" transform="translate(338 344)">
-        <rect class="node-shape" width="170" height="132"></rect>
-        <text class="node-title" x="85" y="48">状态投影 / Projection</text>
-        <text class="node-subtitle" x="85" y="72">最小必要字段</text>
-        <text class="node-subtitle" x="85" y="94">用于下一步决策</text>
+      <g class="flow-node" data-node="projection" tabindex="0" style="--node-color: var(--checkpoint); --node-tint: #e7f2f6" transform="translate(305 344)">
+        <rect class="node-shape" width="160" height="132"></rect>
+        <text class="node-title" x="80" y="42">状态投影</text>
+        <text class="node-subtitle" x="80" y="64">Projection</text>
+        <text class="node-subtitle" x="80" y="86">最小必要字段</text>
+        <text class="node-subtitle" x="80" y="108">用于下一步决策</text>
       </g>
 
-      <g class="flow-node" data-node="archive" tabindex="0" style="--node-color: var(--archive); --node-tint: #eeecf8" transform="translate(880 512)">
-        <rect class="node-shape" width="170" height="100"></rect>
-        <text class="node-title" x="85" y="40">原始存档 / Archive</text>
-        <text class="node-subtitle" x="85" y="64">archive.jsonl</text>
+      <g class="flow-node" data-node="archive" tabindex="0" style="--node-color: var(--archive); --node-tint: #eeecf8" transform="translate(775 512)">
+        <rect class="node-shape" width="160" height="100"></rect>
+        <text class="node-title" x="80" y="34">原始存档</text>
+        <text class="node-subtitle" x="80" y="56">Archive</text>
+        <text class="node-subtitle" x="80" y="76">archive.jsonl</text>
       </g>
 
-      <g class="flow-node" data-node="checkpoint" tabindex="0" style="--node-color: var(--checkpoint); --node-tint: #e7f2f6" transform="translate(632 540)">
-        <rect class="node-shape" width="172" height="100"></rect>
-        <text class="node-title" x="86" y="40">检查点 / Checkpoint</text>
-        <text class="node-subtitle" x="86" y="64">切换启动包</text>
+      <g class="flow-node" data-node="checkpoint" tabindex="0" style="--node-color: var(--checkpoint); --node-tint: #e7f2f6" transform="translate(520 558)">
+        <rect class="node-shape" width="155" height="100"></rect>
+        <text class="node-title" x="77.5" y="34">检查点</text>
+        <text class="node-subtitle" x="77.5" y="56">Checkpoint</text>
+        <text class="node-subtitle" x="77.5" y="76">切换启动包</text>
       </g>
 
-      <g class="flow-node" data-node="new-window" tabindex="0" style="--node-color: var(--context); --node-tint: #e9f0f8" transform="translate(940 60)">
+      <g class="flow-node" data-node="new-window" tabindex="0" style="--node-color: var(--context); --node-tint: #e9f0f8" transform="translate(780 60)">
         <rect class="node-shape" width="150" height="100" opacity="0"></rect>
       </g>
     </svg>
