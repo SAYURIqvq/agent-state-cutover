@@ -1,0 +1,584 @@
+<div id="agent-cutover-visualizer">
+  <style>
+    #agent-cutover-visualizer {
+      --bg: #f7f5ef;
+      --ink: #19201f;
+      --muted: #66706c;
+      --line: #d7d3c8;
+      --panel: #fffdf7;
+      --panel-2: #eef5f2;
+      --state: #126c5a;
+      --note: #8a5a11;
+      --archive: #4355a4;
+      --patch: #a63f4b;
+      --checkpoint: #285f86;
+      color: var(--ink);
+      background: var(--bg);
+      border: 1px solid var(--line);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 24px;
+      box-sizing: border-box;
+    }
+
+    #agent-cutover-visualizer * {
+      box-sizing: border-box;
+    }
+
+    #agent-cutover-visualizer .topbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 18px;
+      margin-bottom: 20px;
+    }
+
+    #agent-cutover-visualizer h1 {
+      font-size: 28px;
+      line-height: 1.15;
+      margin: 0 0 8px;
+      letter-spacing: 0;
+    }
+
+    #agent-cutover-visualizer .subtitle {
+      max-width: 720px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    #agent-cutover-visualizer .controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    #agent-cutover-visualizer button {
+      appearance: none;
+      border: 1px solid #bfc8c3;
+      background: #ffffff;
+      color: var(--ink);
+      min-height: 36px;
+      padding: 8px 12px;
+      font: inherit;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    #agent-cutover-visualizer button.primary {
+      color: #ffffff;
+      background: var(--state);
+      border-color: var(--state);
+    }
+
+    #agent-cutover-visualizer button:focus-visible {
+      outline: 3px solid #88c7ba;
+      outline-offset: 2px;
+    }
+
+    #agent-cutover-visualizer .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 360px;
+      gap: 18px;
+      align-items: start;
+    }
+
+    #agent-cutover-visualizer .flow {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    #agent-cutover-visualizer .node {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      min-height: 132px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    #agent-cutover-visualizer .node.active {
+      border-color: var(--accent);
+      box-shadow: inset 4px 0 0 var(--accent);
+    }
+
+    #agent-cutover-visualizer .node h2,
+    #agent-cutover-visualizer .panel h2 {
+      font-size: 15px;
+      margin: 0 0 8px;
+      letter-spacing: 0;
+    }
+
+    #agent-cutover-visualizer .node p {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+      margin: 0;
+    }
+
+    #agent-cutover-visualizer .tag {
+      display: inline-flex;
+      width: fit-content;
+      color: #ffffff;
+      background: var(--accent);
+      font-size: 11px;
+      line-height: 1;
+      padding: 5px 7px;
+      margin-top: 12px;
+    }
+
+    #agent-cutover-visualizer .arrow {
+      grid-column: 1 / -1;
+      height: 32px;
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      align-items: center;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    #agent-cutover-visualizer .arrow span {
+      border-top: 1px solid var(--line);
+      padding-top: 7px;
+      text-align: center;
+    }
+
+    #agent-cutover-visualizer .panel {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+
+    #agent-cutover-visualizer .panel.state {
+      border-left: 4px solid var(--state);
+    }
+
+    #agent-cutover-visualizer .panel.note {
+      border-left: 4px solid var(--note);
+    }
+
+    #agent-cutover-visualizer .panel.archive {
+      border-left: 4px solid var(--archive);
+    }
+
+    #agent-cutover-visualizer .panel.checkpoint {
+      border-left: 4px solid var(--checkpoint);
+    }
+
+    #agent-cutover-visualizer pre {
+      background: #101716;
+      color: #d7f5ea;
+      padding: 12px;
+      overflow: auto;
+      max-height: 260px;
+      font-size: 12px;
+      line-height: 1.45;
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    #agent-cutover-visualizer .mini {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+      margin: 0 0 10px;
+    }
+
+    #agent-cutover-visualizer .event-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    #agent-cutover-visualizer .event {
+      background: var(--panel-2);
+      border: 1px solid #dce7e2;
+      padding: 10px;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    #agent-cutover-visualizer .event strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    #agent-cutover-visualizer .step-strip {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin: 16px 0 18px;
+    }
+
+    #agent-cutover-visualizer .step {
+      border: 1px solid var(--line);
+      background: #ffffff;
+      padding: 10px;
+      min-height: 64px;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    #agent-cutover-visualizer .step[aria-current="true"] {
+      border-color: var(--patch);
+      box-shadow: inset 0 -3px 0 var(--patch);
+    }
+
+    #agent-cutover-visualizer .step span {
+      color: var(--muted);
+      display: block;
+      font-size: 11px;
+      margin-bottom: 4px;
+    }
+
+    #agent-cutover-visualizer .step b {
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    @media (max-width: 880px) {
+      #agent-cutover-visualizer {
+        padding: 16px;
+      }
+
+      #agent-cutover-visualizer .topbar,
+      #agent-cutover-visualizer .layout {
+        grid-template-columns: 1fr;
+        display: grid;
+      }
+
+      #agent-cutover-visualizer .controls {
+        justify-content: flex-start;
+      }
+
+      #agent-cutover-visualizer .flow,
+      #agent-cutover-visualizer .step-strip {
+        grid-template-columns: 1fr;
+      }
+
+      #agent-cutover-visualizer .arrow {
+        display: none;
+      }
+    }
+  </style>
+
+  <div class="topbar">
+    <div>
+      <h1>Agent State Cutover Flow</h1>
+      <p class="subtitle">A long-running agent survives context limits by writing durable state, notes, and archive events, then starting the next window from a compact checkpoint.</p>
+    </div>
+    <div class="controls">
+      <button type="button" id="hcc-reset">Reset</button>
+      <button type="button" class="primary" id="hcc-advance">Next Step</button>
+    </div>
+  </div>
+
+  <div class="step-strip" id="hcc-steps"></div>
+
+  <div class="layout">
+    <section class="flow" aria-label="Hard context cutover flow">
+      <div class="node" style="--accent: var(--patch)" data-node="0">
+        <div>
+          <h2>1. Current Window</h2>
+          <p>The agent reads the current projection, reasons, and performs one unit of work.</p>
+        </div>
+        <span class="tag">context</span>
+      </div>
+      <div class="node" style="--accent: var(--patch)" data-node="1">
+        <div>
+          <h2>2. State Patch</h2>
+          <p>The model proposes only the fields changed by this round: set, append, or unset.</p>
+        </div>
+        <span class="tag">minimal mutation</span>
+      </div>
+      <div class="node" style="--accent: var(--state)" data-node="2">
+        <div>
+          <h2>3. Schema Validation</h2>
+          <p>The program checks field names, value types, enums, and operation overlap.</p>
+        </div>
+        <span class="tag">guardrail</span>
+      </div>
+
+      <div class="arrow" aria-hidden="true">
+        <span>tool result</span>
+        <span>patch</span>
+        <span>validate</span>
+        <span>merge</span>
+        <span>append</span>
+        <span>project</span>
+      </div>
+
+      <div class="node" style="--accent: var(--state)" data-node="3">
+        <div>
+          <h2>4. Global State</h2>
+          <p>The validated patch merges into the durable current facts stored outside the model.</p>
+        </div>
+        <span class="tag">state.json</span>
+      </div>
+      <div class="node" style="--accent: var(--archive)" data-node="4">
+        <div>
+          <h2>5. Archive</h2>
+          <p>Raw events are appended for traceability without loading every event into context.</p>
+        </div>
+        <span class="tag">archive.jsonl</span>
+      </div>
+      <div class="node" style="--accent: var(--checkpoint)" data-node="5">
+        <div>
+          <h2>6. Checkpoint</h2>
+          <p>A new window starts from state projection, notes, and recent archive pointers.</p>
+        </div>
+        <span class="tag">hard cutover</span>
+      </div>
+    </section>
+
+    <aside>
+      <div class="panel state">
+        <h2>State</h2>
+        <p class="mini">Durable facts the next decision depends on.</p>
+        <pre id="hcc-state"></pre>
+      </div>
+      <div class="panel note">
+        <h2>Note</h2>
+        <p class="mini">Compact working memory for restoring intent.</p>
+        <pre id="hcc-note"></pre>
+      </div>
+      <div class="panel archive">
+        <h2>Archive Tail</h2>
+        <p class="mini">Recent raw events kept as evidence pointers.</p>
+        <div class="event-list" id="hcc-archive"></div>
+      </div>
+      <div class="panel checkpoint">
+        <h2>Checkpoint</h2>
+        <p class="mini">What the fresh context window receives.</p>
+        <pre id="hcc-checkpoint"></pre>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    (function () {
+      const root = document.getElementById("agent-cutover-visualizer");
+      const steps = [
+        {
+          title: "Read Projection",
+          active: 0,
+          state: {
+            "task.current_step": 72,
+            "task.status": "running",
+            "task.environment": "staging",
+            "infra.server_ip": "",
+            "constraints": ["禁止修改 production"],
+            "task.next": "部署服务器"
+          },
+          notes: {
+            completed: ["数据库迁移完成"],
+            pending: ["部署服务器", "配置 Nginx", "运行测试"],
+            next: ["先完成 staging 服务器部署"],
+            important: ["用户明确要求不能修改 production"]
+          },
+          events: [
+            ["user.message", "要求完成部署，但禁止修改 production"],
+            ["tool.result", "数据库迁移成功"]
+          ],
+          checkpoint: null
+        },
+        {
+          title: "Propose Patch",
+          active: 1,
+          patch: {
+            set: {
+              "task.current_step": 73,
+              "infra.server_ip": "10.0.0.8",
+              "task.next": "配置 Nginx 并验证 HTTPS"
+            },
+            append: {
+              "task.completed": ["服务器部署完成"],
+              "notes.completed": ["服务器已部署到 staging"],
+              "notes.pending": ["Nginx 尚未配置"],
+              "notes.next": ["验证 HTTPS"]
+            },
+            unset: []
+          }
+        },
+        {
+          title: "Validate Patch",
+          active: 2,
+          validation: [
+            "task.current_step is int",
+            "infra.server_ip is declared",
+            "task.next is string",
+            "no field appears in two operations"
+          ]
+        },
+        {
+          title: "Commit State",
+          active: 3,
+          state: {
+            "task.current_step": 73,
+            "task.status": "running",
+            "task.environment": "staging",
+            "infra.server_ip": "10.0.0.8",
+            "constraints": ["禁止修改 production"],
+            "task.next": "配置 Nginx 并验证 HTTPS"
+          },
+          notes: {
+            completed: ["数据库迁移完成", "服务器已部署到 staging"],
+            pending: ["Nginx 尚未配置"],
+            next: ["验证 HTTPS"],
+            important: ["用户明确要求不能修改 production"]
+          }
+        },
+        {
+          title: "Append Archive",
+          active: 4,
+          events: [
+            ["state.patch", "set current_step=73 and server_ip=10.0.0.8"],
+            ["tool.result", "server deployment completed on staging"]
+          ]
+        },
+        {
+          title: "Hard Cutover",
+          active: 5,
+          checkpoint: {
+            purpose: "Start a fresh context window from this checkpoint.",
+            state_projection: {
+              "task.current_step": 73,
+              "task.environment": "staging",
+              "infra.server_ip": "10.0.0.8",
+              "constraints": ["禁止修改 production"],
+              "task.next": "配置 Nginx 并验证 HTTPS"
+            },
+            notes: {
+              completed: ["数据库迁移完成", "服务器已部署到 staging"],
+              pending: ["Nginx 尚未配置"],
+              next: ["验证 HTTPS"],
+              important: ["用户明确要求不能修改 production"]
+            },
+            recent_archive_events: ["state.patch", "tool.result"]
+          }
+        }
+      ];
+
+      let index = 0;
+      const stateEl = root.querySelector("#hcc-state");
+      const noteEl = root.querySelector("#hcc-note");
+      const archiveEl = root.querySelector("#hcc-archive");
+      const checkpointEl = root.querySelector("#hcc-checkpoint");
+      const stepEl = root.querySelector("#hcc-steps");
+      const nodes = Array.from(root.querySelectorAll(".node"));
+
+      const view = {
+        state: steps[0].state,
+        notes: steps[0].notes,
+        events: steps[0].events.slice(),
+        checkpoint: steps[0].checkpoint
+      };
+
+      function applyStep(step) {
+        if (step.state) view.state = step.state;
+        if (step.notes) view.notes = step.notes;
+        if (step.events) view.events = view.events.concat(step.events).slice(-5);
+        if (step.checkpoint) view.checkpoint = step.checkpoint;
+      }
+
+      function format(value) {
+        return JSON.stringify(value, null, 2);
+      }
+
+      function renderSteps() {
+        stepEl.innerHTML = "";
+        steps.forEach((step, i) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "step";
+          button.setAttribute("aria-current", i === index ? "true" : "false");
+          button.innerHTML = "<span>Step " + (i + 1) + "</span><b>" + step.title + "</b>";
+          button.addEventListener("click", () => {
+            resetView();
+            for (let cursor = 0; cursor <= i; cursor += 1) applyStep(steps[cursor]);
+            index = i;
+            render();
+          });
+          stepEl.appendChild(button);
+        });
+      }
+
+      function renderArchive() {
+        archiveEl.innerHTML = "";
+        view.events.forEach((event) => {
+          const item = document.createElement("div");
+          item.className = "event";
+          item.innerHTML = "<strong>" + event[0] + "</strong><span>" + event[1] + "</span>";
+          archiveEl.appendChild(item);
+        });
+      }
+
+      function renderNodes() {
+        const active = steps[index].active;
+        nodes.forEach((node, i) => node.classList.toggle("active", i === active));
+      }
+
+      function renderCheckpoint() {
+        if (view.checkpoint) {
+          checkpointEl.textContent = format(view.checkpoint);
+          return;
+        }
+        const preview = {
+          state_projection: {
+            "task.current_step": view.state["task.current_step"],
+            "task.environment": view.state["task.environment"],
+            "constraints": view.state.constraints,
+            "task.next": view.state["task.next"]
+          },
+          notes: view.notes,
+          recent_archive_events: view.events.map((event) => event[0])
+        };
+        checkpointEl.textContent = format(preview);
+      }
+
+      function render() {
+        const step = steps[index];
+        const statePayload = step.patch ? { proposed_patch: step.patch } : view.state;
+        const notePayload = step.validation ? { validation_checks: step.validation } : view.notes;
+        stateEl.textContent = format(statePayload);
+        noteEl.textContent = format(notePayload);
+        renderArchive();
+        renderCheckpoint();
+        renderNodes();
+        renderSteps();
+      }
+
+      function resetView() {
+        view.state = steps[0].state;
+        view.notes = steps[0].notes;
+        view.events = steps[0].events.slice();
+        view.checkpoint = null;
+      }
+
+      root.querySelector("#hcc-reset").addEventListener("click", () => {
+        index = 0;
+        resetView();
+        render();
+      });
+
+      root.querySelector("#hcc-advance").addEventListener("click", () => {
+        index = (index + 1) % steps.length;
+        if (index === 0) resetView();
+        applyStep(steps[index]);
+        render();
+      });
+
+      render();
+    })();
+  </script>
+</div>

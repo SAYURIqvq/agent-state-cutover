@@ -317,6 +317,14 @@ Checkpoint 的实现位于 [src/hard_context_cutover/checkpoint.py](/Users/huang
 
 当前项目没有外部运行依赖，只需要 Python 3.10+。
 
+查看流程可视化界面：
+
+```text
+visualizer/index.html
+```
+
+这个页面不需要构建工具，直接用浏览器打开即可。它用一个交互式流程演示 `Current Window -> State Patch -> Schema Validation -> Global State -> Archive -> Checkpoint` 的状态变化。
+
 初始化外部状态目录：
 
 ```bash
