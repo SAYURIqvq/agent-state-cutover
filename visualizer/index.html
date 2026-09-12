@@ -1,33 +1,32 @@
-<div id="agent-cutover-flow">
+<div id="cutover-vertical">
   <style>
-    #agent-cutover-flow {
-      --bg: #f6f3ea;
-      --ink: #1b2321;
-      --muted: #68716d;
-      --line: #bfc8c3;
-      --panel: #fffdf7;
-      --panel-soft: #edf5f0;
-      --context: #3b5f8a;
-      --patch: #a5484f;
+    #cutover-vertical {
+      --bg: #f7f4ec;
+      --ink: #18211f;
+      --muted: #65706b;
+      --line: #cfc8ba;
+      --panel: #fffdf8;
+      --soft: #eef5f1;
       --state: #176d5a;
+      --note: #90651a;
       --archive: #5b519b;
-      --note: #8a6116;
-      --checkpoint: #2b6b84;
+      --patch: #a5484f;
+      --cutover: #2b6b84;
       --reject: #934034;
       color: var(--ink);
       background: var(--bg);
       border: 1px solid #ded8ca;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       margin: 0 auto;
-      max-width: 1180px;
+      max-width: 1120px;
       padding: 22px;
     }
 
-    #agent-cutover-flow * {
+    #cutover-vertical * {
       box-sizing: border-box;
     }
 
-    #agent-cutover-flow .header {
+    #cutover-vertical .header {
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto;
       gap: 16px;
@@ -37,29 +36,29 @@
       margin-bottom: 18px;
     }
 
-    #agent-cutover-flow h1 {
+    #cutover-vertical h1 {
       font-size: 28px;
-      line-height: 1.12;
+      line-height: 1.15;
       letter-spacing: 0;
       margin: 0 0 8px;
     }
 
-    #agent-cutover-flow .lead {
+    #cutover-vertical .lead {
       color: var(--muted);
       font-size: 14px;
-      line-height: 1.6;
+      line-height: 1.65;
       margin: 0;
-      max-width: 760px;
+      max-width: 780px;
     }
 
-    #agent-cutover-flow .toolbar {
+    #cutover-vertical .toolbar {
       display: flex;
-      flex-wrap: wrap;
       gap: 8px;
+      flex-wrap: wrap;
       justify-content: flex-end;
     }
 
-    #agent-cutover-flow button {
+    #cutover-vertical button {
       appearance: none;
       background: #ffffff;
       border: 1px solid var(--line);
@@ -71,214 +70,285 @@
       padding: 8px 12px;
     }
 
-    #agent-cutover-flow button.primary {
+    #cutover-vertical button.primary {
       background: var(--state);
       border-color: var(--state);
       color: #ffffff;
     }
 
-    #agent-cutover-flow button[aria-pressed="true"] {
+    #cutover-vertical button[aria-pressed="true"] {
       box-shadow: inset 0 -3px 0 var(--patch);
     }
 
-    #agent-cutover-flow button:focus-visible,
-    #agent-cutover-flow .flow-node:focus-visible {
-      outline: 3px solid #8ac8bd;
-      outline-offset: 2px;
-    }
-
-    #agent-cutover-flow .canvas-wrap {
-      background: #fffdf7;
-      border: 1px solid #ded8ca;
-      overflow: hidden;
-    }
-
-    #agent-cutover-flow svg {
-      display: block;
-      max-width: 100%;
-      width: 100%;
-      height: auto;
-    }
-
-    #agent-cutover-flow .edge {
-      fill: none;
-      stroke: #7d8883;
-      stroke-width: 2;
-    }
-
-    #agent-cutover-flow .edge.hot {
-      stroke: var(--patch);
-      stroke-width: 4;
-    }
-
-    #agent-cutover-flow .edge.branch {
-      stroke-dasharray: 6 6;
-    }
-
-    #agent-cutover-flow .edge-label {
-      fill: var(--muted);
-      font-size: 11px;
-      font-weight: 650;
-      text-anchor: middle;
-    }
-
-    #agent-cutover-flow .flow-node {
-      cursor: pointer;
-    }
-
-    #agent-cutover-flow .node-shape {
-      fill: #ffffff;
-      stroke: var(--node-color);
-      stroke-width: 2;
-    }
-
-    #agent-cutover-flow .flow-node.active .node-shape {
-      fill: var(--node-tint);
-      stroke-width: 4;
-    }
-
-    #agent-cutover-flow .node-title {
-      fill: var(--ink);
-      font-size: 15px;
-      font-weight: 750;
-      letter-spacing: 0;
-      text-anchor: middle;
-    }
-
-    #agent-cutover-flow .node-subtitle {
-      fill: var(--muted);
-      font-size: 12px;
-      text-anchor: middle;
-    }
-
-    #agent-cutover-flow .legend {
-      display: flex;
-      gap: 10px 16px;
-      flex-wrap: wrap;
-      padding: 12px 2px 0;
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    #agent-cutover-flow .legend span {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    #agent-cutover-flow .swatch {
-      width: 12px;
-      height: 12px;
-      background: var(--c);
-      border: 1px solid rgba(0, 0, 0, 0.12);
-    }
-
-    #agent-cutover-flow .details {
+    #cutover-vertical .map {
       display: grid;
-      grid-template-columns: 280px minmax(0, 1fr);
-      gap: 16px;
-      margin-top: 16px;
+      grid-template-columns: minmax(220px, 1fr) 64px minmax(300px, 1.25fr) 64px minmax(220px, 1fr);
+      gap: 0;
       align-items: start;
     }
 
-    #agent-cutover-flow .step-list,
-    #agent-cutover-flow .inspector {
+    #cutover-vertical .left {
+      grid-column: 1;
+    }
+
+    #cutover-vertical .center {
+      grid-column: 3;
+    }
+
+    #cutover-vertical .right {
+      grid-column: 5;
+    }
+
+    #cutover-vertical .memory,
+    #cutover-vertical .branch,
+    #cutover-vertical .step {
+      background: var(--panel);
+      border: 2px solid var(--line);
+      padding: 14px;
+    }
+
+    #cutover-vertical .memory {
+      margin-bottom: 14px;
+      min-height: 104px;
+    }
+
+    #cutover-vertical .memory.state {
+      border-color: var(--state);
+      margin-top: 0;
+    }
+
+    #cutover-vertical .memory.note {
+      border-color: var(--note);
+      margin-top: 138px;
+    }
+
+    #cutover-vertical .memory.archive {
+      border-color: var(--archive);
+      margin-top: 138px;
+    }
+
+    #cutover-vertical .memory.checkpoint {
+      border-color: var(--cutover);
+      margin-top: 438px;
+    }
+
+    #cutover-vertical .branch {
+      border-color: var(--reject);
+      margin-top: 338px;
+    }
+
+    #cutover-vertical .memory h2,
+    #cutover-vertical .branch h2,
+    #cutover-vertical .step h2 {
+      font-size: 16px;
+      letter-spacing: 0;
+      line-height: 1.35;
+      margin: 0 0 8px;
+    }
+
+    #cutover-vertical .memory p,
+    #cutover-vertical .branch p,
+    #cutover-vertical .step p {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+      margin: 0;
+    }
+
+    #cutover-vertical .step {
+      border-color: var(--state);
+      margin-bottom: 20px;
+      min-height: 106px;
+      position: relative;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    #cutover-vertical .step.patch {
+      border-color: var(--patch);
+    }
+
+    #cutover-vertical .step.cutover {
+      border-color: var(--cutover);
+    }
+
+    #cutover-vertical .step.active,
+    #cutover-vertical .memory.active,
+    #cutover-vertical .branch.active {
+      background: #eef7f3;
+      border-width: 4px;
+    }
+
+    #cutover-vertical .step::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: -22px;
+      width: 2px;
+      height: 20px;
+      background: #83908a;
+    }
+
+    #cutover-vertical .step:last-child::after {
+      display: none;
+    }
+
+    #cutover-vertical .badge {
+      color: #ffffff;
+      background: var(--state);
+      display: inline-block;
+      font-size: 11px;
+      line-height: 1;
+      margin-bottom: 8px;
+      padding: 5px 7px;
+    }
+
+    #cutover-vertical .step.patch .badge {
+      background: var(--patch);
+    }
+
+    #cutover-vertical .step.cutover .badge {
+      background: var(--cutover);
+    }
+
+    #cutover-vertical .lane {
+      min-height: 720px;
+      padding: 0 8px;
+      position: relative;
+    }
+
+    #cutover-vertical .connector {
+      border-top: 2px dashed #87918c;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+      padding-top: 7px;
+      text-align: center;
+      position: absolute;
+      left: 0;
+      right: 0;
+    }
+
+    #cutover-vertical .c-state {
+      top: 44px;
+    }
+
+    #cutover-vertical .c-note {
+      top: 276px;
+    }
+
+    #cutover-vertical .c-archive {
+      top: 486px;
+    }
+
+    #cutover-vertical .c-reject {
+      top: 372px;
+    }
+
+    #cutover-vertical .c-checkpoint {
+      top: 712px;
+    }
+
+    #cutover-vertical .details {
+      border-top: 1px solid #ded8ca;
+      margin-top: 20px;
+      padding-top: 16px;
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    #cutover-vertical .steps-list,
+    #cutover-vertical .explain {
       background: var(--panel);
       border: 1px solid #ded8ca;
       padding: 14px;
     }
 
-    #agent-cutover-flow h2 {
-      font-size: 15px;
-      letter-spacing: 0;
-      margin: 0 0 10px;
-    }
-
-    #agent-cutover-flow .step-list {
+    #cutover-vertical .steps-list {
       display: grid;
       gap: 8px;
     }
 
-    #agent-cutover-flow .step-button {
-      display: block;
+    #cutover-vertical .steps-list button {
       text-align: left;
       width: 100%;
     }
 
-    #agent-cutover-flow .step-button strong {
+    #cutover-vertical .steps-list strong {
       display: block;
       font-size: 13px;
       line-height: 1.35;
       margin-bottom: 4px;
     }
 
-    #agent-cutover-flow .step-button span {
+    #cutover-vertical .steps-list span {
       color: var(--muted);
       display: block;
       font-size: 12px;
       line-height: 1.35;
     }
 
-    #agent-cutover-flow .inspector-grid {
+    #cutover-vertical .explain-grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 12px;
     }
 
-    #agent-cutover-flow .box {
+    #cutover-vertical .explain-box {
+      background: var(--soft);
       border: 1px solid #d9dfdb;
-      background: var(--panel-soft);
       padding: 12px;
-      min-height: 120px;
+      min-height: 110px;
     }
 
-    #agent-cutover-flow .box h3 {
+    #cutover-vertical .explain-box h3 {
       font-size: 13px;
       margin: 0 0 8px;
-      letter-spacing: 0;
     }
 
-    #agent-cutover-flow .box.state {
-      border-left: 4px solid var(--state);
-    }
-
-    #agent-cutover-flow .box.note {
-      border-left: 4px solid var(--note);
-    }
-
-    #agent-cutover-flow .box.archive {
-      border-left: 4px solid var(--archive);
-    }
-
-    #agent-cutover-flow .box.patch {
-      border-left: 4px solid var(--patch);
-    }
-
-    #agent-cutover-flow pre {
+    #cutover-vertical pre {
       background: #111816;
       color: #d8f6ed;
       font-size: 12px;
       line-height: 1.45;
       margin: 0;
-      max-height: 260px;
+      max-height: 230px;
       overflow: auto;
       padding: 10px;
       white-space: pre-wrap;
       word-break: break-word;
     }
 
-    @media (max-width: 760px) {
-      #agent-cutover-flow {
+    @media (max-width: 880px) {
+      #cutover-vertical {
         padding: 14px;
       }
 
-      #agent-cutover-flow .header,
-      #agent-cutover-flow .details,
-      #agent-cutover-flow .inspector-grid {
+      #cutover-vertical .header,
+      #cutover-vertical .map,
+      #cutover-vertical .details,
+      #cutover-vertical .explain-grid {
+        display: grid;
         grid-template-columns: 1fr;
       }
 
-      #agent-cutover-flow .toolbar {
+      #cutover-vertical .left,
+      #cutover-vertical .center,
+      #cutover-vertical .right {
+        grid-column: 1;
+      }
+
+      #cutover-vertical .lane {
+        display: none;
+      }
+
+      #cutover-vertical .memory,
+      #cutover-vertical .branch {
+        margin-top: 0;
+      }
+
+      #cutover-vertical .toolbar {
         justify-content: flex-start;
       }
     }
@@ -286,149 +356,108 @@
 
   <div class="header">
     <div>
-      <h1>硬切上下文流程 / Hard Context Cutover Flow</h1>
-      <p class="lead">这张图展示真实分支：合法补丁写入状态，非法补丁被拒绝重试，上下文快满时生成检查点，状态冲突时回到原始存档追溯证据。 / Valid patches merge into State, invalid patches retry, context pressure triggers a checkpoint, and conflicts trace back into Archive.</p>
+      <h1>硬切上下文流程 / Hard Context Cutover</h1>
+      <p class="lead">主线从上到下看：模型只拿当前需要的信息执行一步，产出状态补丁；程序校验补丁，合法就写入 State，同时把原始证据放进 Archive；窗口快满时生成 Checkpoint，新窗口加载它继续。</p>
     </div>
     <div class="toolbar">
-      <button type="button" id="hcc-reset">重置 / Reset</button>
-      <button type="button" id="hcc-show-fail">显示失败分支 / Show Failure Branch</button>
-      <button type="button" class="primary" id="hcc-next">下一步高亮 / Next Highlight</button>
+      <button type="button" id="reset">重置 / Reset</button>
+      <button type="button" class="primary" id="next">下一步 / Next</button>
     </div>
   </div>
 
-  <div class="canvas-wrap" aria-label="Mermaid 风格的硬切上下文流程图 / Mermaid style hard context cutover flowchart">
-    <svg viewBox="0 0 960 720" role="img" aria-labelledby="flow-title flow-desc">
-      <title id="flow-title">硬切上下文架构流程 / Hard Context Cutover architecture flow</title>
-      <desc id="flow-desc">分支流程图，展示当前上下文、工具调用、状态补丁校验、状态合并、存档追加、检查点创建和新窗口继续执行。</desc>
-      <defs>
-        <marker id="arrow" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
-          <path d="M 1 1 L 11 6 L 1 11 z" fill="#7d8883"></path>
-        </marker>
-        <marker id="arrow-hot" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
-          <path d="M 1 1 L 11 6 L 1 11 z" fill="#a5484f"></path>
-        </marker>
-      </defs>
+  <div class="map" aria-label="竖向硬切上下文流程图">
+    <div class="left">
+      <div class="memory state" data-step="state">
+        <h2>State 状态</h2>
+        <p>当前事实表。保存 step、环境、约束、server_ip 等下一步必须知道的信息。</p>
+      </div>
+      <div class="memory note" data-step="note">
+        <h2>Note 笔记</h2>
+        <p>恢复任务用。记录已完成、待完成、下一步、重要提醒。</p>
+      </div>
+      <div class="memory archive" data-step="archive">
+        <h2>Archive 原始存档</h2>
+        <p>完整证据库。用户原话、工具返回、错误日志、文件修改、状态补丁都追加保存。</p>
+      </div>
+    </div>
 
-      <path class="edge" data-edge="window-tool" d="M 190 110 H 278" marker-end="url(#arrow)"></path>
-      <path class="edge" data-edge="tool-patch" d="M 432 110 H 520" marker-end="url(#arrow)"></path>
-      <path class="edge" data-edge="patch-validate" d="M 600 110 V 174" marker-end="url(#arrow)"></path>
-      <path class="edge" data-edge="validate-state" d="M 600 278 V 344" marker-end="url(#arrow)"></path>
-      <path class="edge" data-edge="state-project" d="M 655 410 H 465" marker-end="url(#arrow)"></path>
-      <path class="edge" data-edge="project-window" d="M 305 410 H 210 C 134 410 95 350 95 276 V 172" marker-end="url(#arrow)"></path>
-      <path class="edge" data-edge="state-archive" d="M 805 410 H 850 V 512" marker-end="url(#arrow)"></path>
-      <path class="edge branch" data-edge="validate-reject" d="M 680 226 H 840 V 110 H 815" marker-end="url(#arrow)"></path>
-      <path class="edge branch" data-edge="state-conflict" d="M 730 476 V 552 H 275 V 484" marker-end="url(#arrow)"></path>
-      <path class="edge branch" data-edge="pressure-checkpoint" d="M 385 476 V 608 H 520" marker-end="url(#arrow)"></path>
-      <path class="edge" data-edge="checkpoint-new" d="M 675 608 H 875 V 172" marker-end="url(#arrow)"></path>
+    <div class="lane">
+      <div class="connector c-state">读 State<br>read facts</div>
+      <div class="connector c-note">读 Note<br>read notes</div>
+      <div class="connector c-archive">写 Archive<br>append evidence</div>
+    </div>
 
-      <text class="edge-label" x="234" y="96">1</text>
-      <text class="edge-label" x="476" y="96">2</text>
-      <text class="edge-label" x="624" y="318">是</text>
-      <text class="edge-label" x="748" y="214">否</text>
-      <text class="edge-label" x="828" y="398">存档</text>
-      <text class="edge-label" x="454" y="592">快满</text>
-      <text class="edge-label" x="750" y="596">新窗口</text>
-      <text class="edge-label" x="420" y="540">回溯</text>
+    <div class="center">
+      <div class="step active" data-step="context">
+        <span class="badge">1</span>
+        <h2>加载当前状态 / Load Current State</h2>
+        <p>不读完整历史，只读 State 投影 + Note + 少量 Archive 指针。</p>
+      </div>
+      <div class="step" data-step="work">
+        <span class="badge">2</span>
+        <h2>执行一步任务 / Execute One Step</h2>
+        <p>Agent 根据当前最小充分信息推理，调用工具，得到工具结果。</p>
+      </div>
+      <div class="step patch" data-step="patch">
+        <span class="badge">3</span>
+        <h2>生成状态补丁 / Produce State Patch</h2>
+        <p>模型不重写完整 State，只输出本轮改变了哪些字段。</p>
+      </div>
+      <div class="step patch" data-step="validate">
+        <span class="badge">4</span>
+        <h2>校验补丁 / Validate Patch</h2>
+        <p>程序检查字段名、类型、枚举、业务约束。合法才允许提交。</p>
+      </div>
+      <div class="step" data-step="commit">
+        <span class="badge">5</span>
+        <h2>提交状态 / Commit State</h2>
+        <p>合法 patch 合并进 State；工具结果和 patch 追加写入 Archive。</p>
+      </div>
+      <div class="step cutover" data-step="project">
+        <span class="badge">6</span>
+        <h2>状态投影 / State Projection</h2>
+        <p>从 Global State 里挑出下一步真正需要的字段，形成干净上下文。</p>
+      </div>
+      <div class="step cutover" data-step="checkpoint">
+        <span class="badge">7</span>
+        <h2>硬切窗口 / Hard Cutover</h2>
+        <p>Context 快满时生成 Checkpoint，新窗口加载它继续。</p>
+      </div>
+    </div>
 
-      <g class="flow-node" data-node="window" tabindex="0" style="--node-color: var(--context); --node-tint: #e9f0f8" transform="translate(30 60)">
-        <rect class="node-shape" width="160" height="100"></rect>
-        <text class="node-title" x="80" y="34">当前窗口</text>
-        <text class="node-subtitle" x="80" y="56">Current Window</text>
-        <text class="node-subtitle" x="80" y="76">状态投影 + 笔记</text>
-      </g>
+    <div class="lane">
+      <div class="connector c-reject">非法 patch<br>reject and retry</div>
+      <div class="connector c-checkpoint">新窗口<br>fresh window</div>
+    </div>
 
-      <g class="flow-node" data-node="tool" tabindex="0" style="--node-color: var(--context); --node-tint: #e9f0f8" transform="translate(278 60)">
-        <rect class="node-shape" width="154" height="100"></rect>
-        <text class="node-title" x="77" y="34">工具执行</text>
-        <text class="node-subtitle" x="77" y="56">Tool Work</text>
-        <text class="node-subtitle" x="77" y="76">执行一步任务</text>
-      </g>
-
-      <g class="flow-node" data-node="patch" tabindex="0" style="--node-color: var(--patch); --node-tint: #faecee" transform="translate(520 60)">
-        <rect class="node-shape" width="160" height="100"></rect>
-        <text class="node-title" x="80" y="34">状态补丁</text>
-        <text class="node-subtitle" x="80" y="56">State Patch</text>
-        <text class="node-subtitle" x="80" y="76">设置 / 追加 / 删除</text>
-      </g>
-
-      <g class="flow-node" data-node="validate" tabindex="0" style="--node-color: var(--state); --node-tint: #e7f4ef" transform="translate(523 178)">
-        <polygon class="node-shape" points="77,0 154,52 77,104 0,52"></polygon>
-        <text class="node-title" x="77" y="42">是否合法？</text>
-        <text class="node-subtitle" x="77" y="62">Valid?</text>
-        <text class="node-subtitle" x="77" y="80">结构约束 + 规则</text>
-      </g>
-
-      <g class="flow-node" data-node="reject" tabindex="0" style="--node-color: var(--reject); --node-tint: #faebe8" transform="translate(815 60)">
-        <rect class="node-shape" width="115" height="100"></rect>
-        <text class="node-title" x="57.5" y="38">拒绝</text>
-        <text class="node-subtitle" x="57.5" y="60">Reject</text>
-        <text class="node-subtitle" x="57.5" y="78">要求重试</text>
-      </g>
-
-      <g class="flow-node" data-node="state" tabindex="0" style="--node-color: var(--state); --node-tint: #e7f4ef" transform="translate(655 344)">
-        <rect class="node-shape" width="150" height="132"></rect>
-        <text class="node-title" x="75" y="42">全局状态</text>
-        <text class="node-subtitle" x="75" y="64">Global State</text>
-        <text class="node-subtitle" x="75" y="86">state.json</text>
-        <text class="node-subtitle" x="75" y="108">持久化事实</text>
-      </g>
-
-      <g class="flow-node" data-node="projection" tabindex="0" style="--node-color: var(--checkpoint); --node-tint: #e7f2f6" transform="translate(305 344)">
-        <rect class="node-shape" width="160" height="132"></rect>
-        <text class="node-title" x="80" y="42">状态投影</text>
-        <text class="node-subtitle" x="80" y="64">Projection</text>
-        <text class="node-subtitle" x="80" y="86">最小必要字段</text>
-        <text class="node-subtitle" x="80" y="108">用于下一步决策</text>
-      </g>
-
-      <g class="flow-node" data-node="archive" tabindex="0" style="--node-color: var(--archive); --node-tint: #eeecf8" transform="translate(775 512)">
-        <rect class="node-shape" width="160" height="100"></rect>
-        <text class="node-title" x="80" y="34">原始存档</text>
-        <text class="node-subtitle" x="80" y="56">Archive</text>
-        <text class="node-subtitle" x="80" y="76">archive.jsonl</text>
-      </g>
-
-      <g class="flow-node" data-node="checkpoint" tabindex="0" style="--node-color: var(--checkpoint); --node-tint: #e7f2f6" transform="translate(520 558)">
-        <rect class="node-shape" width="155" height="100"></rect>
-        <text class="node-title" x="77.5" y="34">检查点</text>
-        <text class="node-subtitle" x="77.5" y="56">Checkpoint</text>
-        <text class="node-subtitle" x="77.5" y="76">切换启动包</text>
-      </g>
-
-      <g class="flow-node" data-node="new-window" tabindex="0" style="--node-color: var(--context); --node-tint: #e9f0f8" transform="translate(780 60)">
-        <rect class="node-shape" width="150" height="100" opacity="0"></rect>
-      </g>
-    </svg>
-  </div>
-
-  <div class="legend" aria-label="Flow legend">
-    <span><i class="swatch" style="--c: var(--context)"></i>上下文窗口 / context window</span>
-    <span><i class="swatch" style="--c: var(--patch)"></i>模型状态变更 / model mutation</span>
-    <span><i class="swatch" style="--c: var(--state)"></i>已校验状态 / validated state</span>
-    <span><i class="swatch" style="--c: var(--archive)"></i>原始证据 / raw evidence</span>
-    <span><i class="swatch" style="--c: var(--checkpoint)"></i>切换路径 / cutover path</span>
+    <div class="right">
+      <div class="branch" data-step="reject">
+        <h2>拒绝重试 / Reject Retry</h2>
+        <p>如果 patch 写了未知字段、类型错误或违反约束，State 不变，要求模型重新输出。</p>
+      </div>
+      <div class="memory checkpoint" data-step="checkpoint">
+        <h2>Checkpoint 检查点</h2>
+        <p>新窗口启动包：State Projection + Note + Archive 指针。</p>
+      </div>
+    </div>
   </div>
 
   <div class="details">
-    <div class="step-list" id="hcc-step-list" aria-label="流程步骤 / Flow steps"></div>
-    <div class="inspector">
-      <h2 id="hcc-title">当前窗口 / Current Window</h2>
-      <div class="inspector-grid">
-        <div class="box state">
-          <h3>核心含义 / Main Idea</h3>
-          <pre id="hcc-main"></pre>
+    <div class="steps-list" id="step-list"></div>
+    <div class="explain">
+      <h2 id="detail-title">加载当前状态 / Load Current State</h2>
+      <div class="explain-grid">
+        <div class="explain-box">
+          <h3>读什么 / Input</h3>
+          <pre id="input"></pre>
         </div>
-        <div class="box patch">
-          <h3>补丁 / 规则</h3>
-          <pre id="hcc-patch"></pre>
+        <div class="explain-box">
+          <h3>做什么 / Process</h3>
+          <pre id="process"></pre>
         </div>
-        <div class="box note">
-          <h3>状态 + 笔记</h3>
-          <pre id="hcc-state"></pre>
-        </div>
-        <div class="box archive">
-          <h3>原始存档 / Archive / 检查点 / Checkpoint</h3>
-          <pre id="hcc-archive"></pre>
+        <div class="explain-box">
+          <h3>写什么 / Output</h3>
+          <pre id="output"></pre>
         </div>
       </div>
     </div>
@@ -436,216 +465,151 @@
 
   <script>
     (function () {
-      const root = document.getElementById("agent-cutover-flow");
-      const nodes = Array.from(root.querySelectorAll(".flow-node"));
-      const edges = Array.from(root.querySelectorAll(".edge"));
-      const stepList = root.querySelector("#hcc-step-list");
-      const title = root.querySelector("#hcc-title");
-      const main = root.querySelector("#hcc-main");
-      const patch = root.querySelector("#hcc-patch");
-      const state = root.querySelector("#hcc-state");
-      const archive = root.querySelector("#hcc-archive");
-
-      const views = {
-        window: {
-          title: "当前窗口 / Current Window",
-          short: "读取投影和笔记 / Read projection and notes",
-          edges: ["window-tool"],
-          main: {
-            role: "模型只看到精简工作上下文 / The model only sees a compact working context.",
-            loaded: ["状态投影 / state projection", "笔记 / notes", "最近存档指针 / recent archive pointers"]
-          },
-          patch: "还没有写状态 / No state write yet.",
-          state: {
+      const root = document.getElementById("cutover-vertical");
+      const steps = {
+        context: {
+          title: "1. 加载当前状态 / Load Current State",
+          short: "只加载当前需要的信息",
+          input: ["state.json", "notes", "recent archive pointers"],
+          process: "做 State Projection，把全局状态投影成当前任务需要的最小上下文。",
+          output: {
             "task.current_step": 72,
-            "task.environment": "staging",
+            "environment": "staging",
             "constraints": ["禁止修改 production"],
-            "task.next": "部署服务器"
-          },
-          archive: {
-            loaded_by_default: false,
-            reason: "默认不加载 Archive，只有需要证据时才检索 / Archive is retrieved only when evidence is needed."
+            "next": "部署服务器"
           }
         },
-        tool: {
-          title: "工具执行 / Tool Work",
-          short: "执行一步任务 / Execute one bounded step",
-          edges: ["tool-patch", "state-archive"],
-          main: {
-            action: "执行一个边界清楚的小步骤 / Run one bounded unit of work.",
-            example: "把服务器部署到 staging / Deploy server to staging."
-          },
-          patch: {
-            "工具结果 / tool_result": {
+        work: {
+          title: "2. 执行一步任务 / Execute One Step",
+          short: "模型推理并调用工具",
+          input: ["State Projection", "Note"],
+          process: "Agent 执行一个边界清楚的小任务，例如部署 staging 服务器。",
+          output: {
+            "tool.result": {
               ok: true,
               server_ip: "10.0.0.8"
             }
-          },
-          state: {
-            "提交 patch 前状态不变 / unchanged_until_patch_commits": true
-          },
-          archive: {
-            kind: "tool.result",
-            payload: "服务器部署到 staging 成功 / server deployment completed on staging"
           }
         },
         patch: {
-          title: "状态补丁 / State Patch",
-          short: "只描述本轮变化 / Describe only this round's changes",
-          edges: ["patch-validate"],
-          main: "模型只提出最小变更，而不是重写完整 State / The model proposes minimal mutation instead of rewriting the full State.",
-          patch: {
+          title: "3. 生成状态补丁 / Produce State Patch",
+          short: "只写本轮变化",
+          input: ["tool.result", "current state"],
+          process: "模型只描述改变的字段，避免重写完整 State 时误删或幻觉。",
+          output: {
             set: {
               "task.current_step": 73,
               "infra.server_ip": "10.0.0.8",
-              "task.next": "配置 Nginx 并验证 HTTPS"
+              "task.next": "配置 Nginx"
             },
             append: {
               "task.completed": ["服务器部署完成"],
               "notes.pending": ["Nginx 尚未配置"]
-            },
-            unset: []
-          },
-          state: "尚未提交 / Not committed yet.",
-          archive: "校验成功后才写入 Archive / Patch will be archived after validation succeeds."
+            }
+          }
         },
         validate: {
-          title: "结构校验 / Schema Validation",
-          short: "合法写入，非法重试 / Commit valid, retry invalid",
-          edges: ["validate-state", "validate-reject"],
-          main: "这是关键分支：合法 patch 提交，非法 patch 拒绝并重试 / Valid patches commit, invalid patches are rejected and retried.",
-          patch: {
-            checks: [
-              "字段必须在 schema 中声明 / field exists in schema",
-              "值类型必须正确 / value type is valid",
-              "枚举值必须允许 / enum value is allowed",
-              "同一字段只能出现在一种操作里 / one field appears in only one operation"
-            ]
-          },
-          state: {
-            "是 / yes": "合并进全局状态 / merge into Global State",
-            "否 / no": "拒绝 patch 并要求模型重试 / reject patch and ask model to retry"
-          },
-          archive: {
-            "失败例子 / failure_example": {
-              set: {
-                "task.current_step": "不知道"
-              },
-              "结果 / result": "被拒绝：current_step 必须是 int / rejected: current_step must be int"
+          title: "4. 校验补丁 / Validate Patch",
+          short: "程序守住状态一致性",
+          input: ["StatePatch", "StateSchema"],
+          process: "检查字段是否存在、类型是否正确、枚举是否合法、同一字段是否被重复操作。",
+          output: {
+            valid: "merge into State",
+            invalid: "reject and retry"
+          }
+        },
+        commit: {
+          title: "5. 提交状态 / Commit State",
+          short: "状态更新，证据归档",
+          input: ["validated patch", "tool.result"],
+          process: "合法 patch 合并进 state.json；原始工具结果和 patch 追加进 archive.jsonl。",
+          output: {
+            "state.json": "current_step = 73, server_ip = 10.0.0.8",
+            "archive.jsonl": ["tool.result", "state.patch"]
+          }
+        },
+        project: {
+          title: "6. 状态投影 / State Projection",
+          short: "给下一步最小充分信息",
+          input: ["Global State"],
+          process: "从完整 State 中选择当前决策需要的字段，减少噪音和上下文占用。",
+          output: {
+            projection: ["task.current_step", "environment", "server_ip", "constraints", "task.next"]
+          }
+        },
+        checkpoint: {
+          title: "7. 硬切窗口 / Hard Cutover",
+          short: "新窗口从检查点继续",
+          input: ["State Projection", "Note", "Archive pointers"],
+          process: "旧窗口结束，新窗口加载 checkpoint 继续执行，不依赖对旧窗口的有损摘要。",
+          output: {
+            "checkpoint.json": {
+              state_projection: "minimum facts",
+              notes: "completed / pending / next / important",
+              archive_tail: "recent evidence pointers"
             }
           }
         },
         reject: {
-          title: "拒绝重试 / Reject Retry",
-          short: "状态不变，要求重写 / Keep state unchanged",
-          edges: ["validate-reject", "patch-validate"],
-          main: "非法状态写入不会改变持久化 State / Invalid state writes do not mutate durable State.",
-          patch: {
-            "被拒绝的 patch / rejected_patch": {
+          title: "分支：拒绝重试 / Reject Retry",
+          short: "非法 patch 不会写坏状态",
+          input: {
+            bad_patch: {
               set: {
-                "made_up.field": "oops"
+                "task.current_step": "不知道"
               }
-            },
-            "原因 / reason": "字段未在 schema 声明 / field is not declared in schema"
+            }
           },
-          state: {
-            "状态保持不变 / unchanged": true,
-            current_step: 72
-          },
-          archive: {
-            "可选记录 / optional_event": "tool.error 或 patch.rejected"
+          process: "Schema 发现 current_step 不是 int，拒绝提交，并要求模型重新输出合法 patch。",
+          output: {
+            state_changed: false,
+            retry: true
           }
         },
         state: {
-          title: "全局状态 / Global State",
-          short: "持久化当前事实 / Persist current facts",
-          edges: ["validate-state", "state-project", "state-archive", "state-conflict"],
-          main: "通过校验的 patch 会成为持久化当前事实 / Validated patches become durable current facts.",
-          patch: "Patch 已提交 / Patch committed.",
-          state: {
-            "task.current_step": 73,
-            "task.environment": "staging",
-            "infra.server_ip": "10.0.0.8",
-            "constraints": ["禁止修改 production"],
-            "task.next": "配置 Nginx 并验证 HTTPS",
-            notes: {
-              completed: ["服务器已部署到 staging"],
-              pending: ["Nginx 尚未配置"],
-              next: ["验证 HTTPS"]
-            }
-          },
-          archive: {
-            kind: "state.patch",
-            stored_as: "追加式 JSONL 事件 / append-only JSONL event"
+          title: "State 状态",
+          short: "当前事实表",
+          input: "每一轮从这里读取当前事实。",
+          process: "State 只保存决策必须知道的事实，不保存完整历史。",
+          output: {
+            current_step: 73,
+            environment: "staging",
+            server_ip: "10.0.0.8",
+            constraints: ["禁止修改 production"]
           }
         },
-        projection: {
-          title: "状态投影 / State Projection",
-          short: "挑选必要字段 / Select necessary fields",
-          edges: ["state-project", "project-window", "pressure-checkpoint"],
-          main: "下一次模型调用只拿当前决策需要的字段 / The next model call receives only fields needed for the current decision.",
-          patch: "Projection 是只读的 / Projection is read-only.",
-          state: {
-            "选中的字段 / selected_fields": [
-              "task.current_step",
-              "task.environment",
-              "infra.server_ip",
-              "constraints",
-              "task.next"
-            ]
-          },
-          archive: {
-            "上下文压力 / context_pressure": "窗口快满时创建 checkpoint，而不是总结所有历史 / create a checkpoint instead of summarizing everything."
+        note: {
+          title: "Note 笔记",
+          short: "恢复任务语境",
+          input: "每轮可以追加少量工作笔记。",
+          process: "记录 Completed / Pending / Next / Important。",
+          output: {
+            completed: ["服务器已部署"],
+            pending: ["配置 Nginx"],
+            next: ["验证 HTTPS"],
+            important: ["不能修改 production"]
           }
         },
         archive: {
-          title: "原始存档 / Archive",
-          short: "保留原始证据 / Keep raw evidence",
-          edges: ["state-archive", "state-conflict"],
-          main: "Archive 把原始事实保存在普通 prompt 之外 / Archive keeps ground truth outside the normal prompt.",
-          patch: "不直接修改 State / No direct state mutation.",
-          state: {
-            "什么时候检索 / retrieved_when": [
-              "状态冲突 / state conflict",
-              "缺少事实 / missing fact",
-              "需要审计或修复 / audit or repair needed"
-            ]
-          },
-          archive: {
-            format: "JSONL",
-            examples: ["user.message", "tool.result", "state.patch", "file.change"]
-          }
-        },
-        checkpoint: {
-          title: "检查点 / Checkpoint",
-          short: "启动新窗口 / Start fresh window",
-          edges: ["pressure-checkpoint", "checkpoint-new"],
-          main: "硬切窗口用结构化 bundle 启动新上下文 / Hard cutover starts a fresh context from a structured bundle.",
-          patch: "不需要对旧窗口做有损摘要 / No lossy summary of the old window is required.",
-          state: {
-            state_projection: {
-              "task.current_step": 73,
-              "task.environment": "staging",
-              "infra.server_ip": "10.0.0.8",
-              "task.next": "配置 Nginx 并验证 HTTPS"
-            },
-            notes: {
-              completed: ["服务器已部署到 staging"],
-              pending: ["Nginx 尚未配置"]
-            }
-          },
-          archive: {
-            recent_archive_events: ["tool.result", "state.patch"],
-            "新窗口 / next_window": "从 checkpoint 继续 / continues from checkpoint"
-          }
+          title: "Archive 原始存档",
+          short: "可追溯证据",
+          input: ["user.message", "tool.result", "state.patch", "file.change"],
+          process: "追加写 JSONL。正常不塞进上下文，只有冲突或缺事实时检索。",
+          output: "archive.jsonl"
         }
       };
 
-      const order = ["window", "tool", "patch", "validate", "state", "projection", "checkpoint", "archive", "reject"];
-      let active = "window";
-      let showFailure = false;
+      const order = ["context", "work", "patch", "validate", "commit", "project", "checkpoint", "reject"];
+      let active = "context";
 
-      function format(value) {
+      const title = root.querySelector("#detail-title");
+      const input = root.querySelector("#input");
+      const process = root.querySelector("#process");
+      const output = root.querySelector("#output");
+      const list = root.querySelector("#step-list");
+      const nodes = Array.from(root.querySelectorAll("[data-step]"));
+
+      function text(value) {
         return typeof value === "string" ? value : JSON.stringify(value, null, 2);
       }
 
@@ -654,76 +618,36 @@
         render();
       }
 
-      function renderSteps() {
-        stepList.innerHTML = "";
+      function renderList() {
+        list.innerHTML = "";
         order.forEach((key) => {
-          const view = views[key];
+          const item = steps[key];
           const button = document.createElement("button");
           button.type = "button";
-          button.className = "step-button";
-          button.innerHTML = "<strong>" + view.title + "</strong><span>" + view.short + "</span>";
           button.setAttribute("aria-pressed", String(key === active));
+          button.innerHTML = "<strong>" + item.title + "</strong><span>" + item.short + "</span>";
           button.addEventListener("click", () => setActive(key));
-          stepList.appendChild(button);
+          list.appendChild(button);
         });
-      }
-
-      function renderGraph() {
-        nodes.forEach((node) => {
-          node.classList.toggle("active", node.dataset.node === active);
-        });
-        const activeEdges = new Set(views[active].edges || []);
-        if (!showFailure && active !== "validate" && active !== "reject") {
-          activeEdges.delete("validate-reject");
-        }
-        edges.forEach((edge) => {
-          const hot = activeEdges.has(edge.dataset.edge);
-          edge.classList.toggle("hot", hot);
-          edge.setAttribute("marker-end", hot ? "url(#arrow-hot)" : "url(#arrow)");
-        });
-      }
-
-      function renderInspector() {
-        const view = views[active];
-        title.textContent = view.title;
-        main.textContent = format(view.main);
-        patch.textContent = format(view.patch);
-        state.textContent = format(view.state);
-        archive.textContent = format(view.archive);
       }
 
       function render() {
-        renderSteps();
-        renderGraph();
-        renderInspector();
+        const item = steps[active];
+        title.textContent = item.title;
+        input.textContent = text(item.input);
+        process.textContent = text(item.process);
+        output.textContent = text(item.output);
+        nodes.forEach((node) => node.classList.toggle("active", node.dataset.step === active));
+        renderList();
       }
 
       nodes.forEach((node) => {
-        const key = node.dataset.node;
-        if (!views[key]) return;
-        node.addEventListener("click", () => setActive(key));
-        node.addEventListener("keydown", (event) => {
-          if (event.key === "Enter" || event.key === " ") {
-            event.preventDefault();
-            setActive(key);
-          }
-        });
+        node.addEventListener("click", () => setActive(node.dataset.step));
       });
 
-      root.querySelector("#hcc-reset").addEventListener("click", () => {
-        showFailure = false;
-        setActive("window");
-      });
-
-      root.querySelector("#hcc-show-fail").addEventListener("click", (event) => {
-        showFailure = !showFailure;
-        event.currentTarget.setAttribute("aria-pressed", String(showFailure));
-        setActive(showFailure ? "reject" : active);
-      });
-
-      root.querySelector("#hcc-next").addEventListener("click", () => {
-        const currentIndex = order.indexOf(active);
-        const nextIndex = (currentIndex + 1) % order.length;
+      root.querySelector("#reset").addEventListener("click", () => setActive("context"));
+      root.querySelector("#next").addEventListener("click", () => {
+        const nextIndex = (order.indexOf(active) + 1) % order.length;
         setActive(order[nextIndex]);
       });
 
