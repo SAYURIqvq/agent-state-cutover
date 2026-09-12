@@ -6,6 +6,131 @@
 
 > 历史不是状态，记忆也不是上下文。长程 Agent 应该依赖结构化的当前状态继续执行，而不是反复阅读和摘要自己的完整历史。
 
+## 先看架构图
+
+这个项目的核心不是“把旧上下文压得更短”，而是把长程任务拆成三层：
+
+- 当前窗口：负责推理和工具调用。
+- 外部状态：负责保存当前事实、工作笔记和原始证据。
+- 新窗口：只加载足够继续执行的当前状态。
+
+### 总体循环
+
+```mermaid
+flowchart TD
+    A[用户任务<br/>User Task] --> B[当前 Agent<br/>Current Agent]
+    B --> C[状态投影<br/>State Projection]
+    C --> D[当前最小状态<br/>Minimal Current State]
+    D --> E[LLM]
+    E --> F[推理 + 工具调用<br/>Reason + Tool Call]
+    F --> G[工具结果<br/>Tool Result]
+    F --> H[状态补丁<br/>State Patch]
+    H --> I[结构校验<br/>Schema Validation]
+    I -->|合法 valid| J[全局状态<br/>Global State]
+    I -->|非法 invalid| K[拒绝重试<br/>Reject / Retry]
+    K --> H
+    G --> L[原始存档<br/>Archive]
+    J --> L
+    J --> C
+    M[工作笔记<br/>Note<br/>Completed / Pending / Next / Important] -.同时维护.-> C
+```
+
+### 旧窗口到新窗口
+
+```mermaid
+flowchart LR
+    subgraph W1[旧上下文窗口 Window 1]
+        A1[执行任务<br/>Execute steps]
+        A2[输出 State Patch]
+        A3[Patch 校验]
+        A4[Context 快满<br/>Near limit]
+        A1 --> A2 --> A3 --> A4
+    end
+
+    subgraph MEM[外部记忆 External Memory]
+        S[State<br/>当前事实]
+        N[Note<br/>工作笔记]
+        R[Archive<br/>原始存档]
+        C[Checkpoint<br/>启动包]
+    end
+
+    subgraph W2[新上下文窗口 Window 2]
+        B1[加载 Checkpoint]
+        B2[读取 State + Note]
+        B3[继续下一步任务]
+        B1 --> B2 --> B3
+    end
+
+    A3 -->|合法 patch 合并| S
+    A2 -->|patch event| R
+    A1 -->|tool result| R
+    A4 -->|保存检查点| C
+    S --> C
+    N --> C
+    R -->|recent event ids| C
+    C --> B1
+```
+
+### 外部记忆分层
+
+```mermaid
+flowchart TB
+    A[External Memory<br/>外部记忆] --> S[State<br/>当前状态表]
+    A --> N[Note<br/>工作笔记]
+    A --> R[Archive<br/>原始存档]
+
+    S --> S1[current_step]
+    S --> S2[environment]
+    S --> S3[constraints]
+    S --> S4[server_ip]
+    S --> S5[next_action]
+
+    N --> N1[completed]
+    N --> N2[pending]
+    N --> N3[next]
+    N --> N4[important]
+
+    R --> R1[user.message]
+    R --> R2[tool.call]
+    R --> R3[tool.result]
+    R --> R4[state.patch]
+    R --> R5[error.log]
+```
+
+### Patch 提交流程
+
+```mermaid
+flowchart TD
+    A[LLM 输出 StatePatch] --> B{Schema Validation}
+    B -->|字段存在| C{Type / Enum Valid?}
+    B -->|字段不存在| X[Reject]
+    C -->|合法| D[Merge into State]
+    C -->|类型错误| X
+    D --> E[Append state.patch to Archive]
+    X --> F[要求模型重新输出 Patch]
+    F --> A
+```
+
+### Checkpoint 内容
+
+```mermaid
+flowchart LR
+    S[Global State] --> P[State Projection]
+    N[Note] --> C[Checkpoint]
+    A[Archive] --> T[Recent Archive Pointers]
+    P --> C
+    T --> C
+    C --> W[New Context Window<br/>新窗口继续任务]
+```
+
+仓库里还有一个可视化页面：
+
+```text
+visualizer/index.html
+```
+
+这个页面不需要构建工具，直接用浏览器打开即可。
+
 ## 解决的问题
 
 很多长程 Agent 会采用这种模式：
@@ -42,6 +167,16 @@ Summary + 最近消息继续执行
 ```
 
 ## 核心概念
+
+这套机制里，最重要的区分是：
+
+```text
+Context 只是模型当前工作台。
+State 才是任务当前事实。
+Archive 才是历史原始证据。
+```
+
+模型可以忘掉旧窗口，但系统不能忘掉当前事实。所以本项目让事实离开上下文窗口，进入外部存储。
 
 ### State
 
@@ -94,6 +229,13 @@ State 适合保存：
 
 State 不适合保存完整历史消息、大段日志、模型推理过程或所有工具输出。
 
+在代码里，State 由 `JsonStateStore` 负责读写：
+
+- `load()`: 从 `state.json` 读取状态；如果不存在，就返回默认状态。
+- `save(state)`: 把新状态写回 `state.json`。
+
+这个设计故意很朴素，因为重点不是数据库选型，而是状态边界：State 必须小、准、结构化。
+
 ### Note
 
 `Note` 是工作笔记，用来帮助新窗口快速恢复任务语境。
@@ -137,6 +279,17 @@ Note:
 
 本项目为了让原型更简单，把 Note 放在 `state.json` 里，因为它在窗口恢复时通常会被一起加载。
 
+如果系统变复杂，可以把 Note 拆出去。比如：
+
+```text
+.agent_state/
+  state.json
+  notes.json
+  archive.jsonl
+```
+
+但拆不拆不是关键。关键是 Note 不应该替代 State。Note 可以比较自然语言化，State 应该更像数据库字段。
+
 ### Archive
 
 `Archive` 是原始档案馆。它保存可追溯的原始事件，不参与每一步默认上下文。
@@ -173,6 +326,15 @@ Archive 适合保存：
 
 Archive 的实现位于 [src/hard_context_cutover/archive.py](/Users/huangxuan/Documents/ChatGPT/长程agent上下午处理机制/src/hard_context_cutover/archive.py)。
 
+Archive 的核心 API 是：
+
+```python
+event_id = archive.append("tool.result", {"ok": True})
+events = archive.tail(10)
+```
+
+它返回 `event_id`，是为了后续可以在 Checkpoint 里保存指针。新窗口默认不读完整 Archive，只拿最近事件或相关事件的指针。
+
 ### StatePatch
 
 `StatePatch` 是模型每轮执行后提交的状态补丁。
@@ -201,6 +363,23 @@ Archive 的实现位于 [src/hard_context_cutover/archive.py](/Users/huangxuan/D
 这样做的好处是最小状态变更。假设 State 有 50 个字段，但这一轮只改变 2 个字段，模型就只能碰这 2 个字段，降低误删、幻觉和覆盖正确状态的风险。
 
 StatePatch 的实现位于 [src/hard_context_cutover/patch.py](/Users/huangxuan/Documents/ChatGPT/长程agent上下午处理机制/src/hard_context_cutover/patch.py)。
+
+Patch 的合并顺序是：
+
+```text
+1. validate patch shape
+2. validate field names
+3. validate values by schema
+4. copy old state
+5. apply set
+6. apply append
+7. apply unset
+8. validate full new state
+9. save
+10. append patch event to archive
+```
+
+注意：程序会先复制旧状态，再生成新状态。这样 patch 校验失败时，不会污染已有 State。
 
 ### Schema Validation
 
@@ -239,6 +418,20 @@ StatePatch 的实现位于 [src/hard_context_cutover/patch.py](/Users/huangxuan/
 
 程序也会拒绝，因为这个字段没有在 schema 中声明。
 
+这个部分对应代码里的 `StateSchema`：
+
+- `FieldSpec("int")`: 字段必须是整数。
+- `FieldSpec("str")`: 字段必须是字符串。
+- `FieldSpec("list")`: 字段必须是列表。
+- `enum=(...)`: 字段只能取有限集合。
+
+真实生产系统里，还可以继续加业务约束，比如：
+
+- `production` 环境禁止修改。
+- `current_step` 只能递增，不能倒退。
+- `server_ip` 必须符合 IP 地址格式。
+- `status = done` 时 `pending` 必须为空。
+
 ### Projection
 
 `Projection` 是状态投影。它从完整 State 中选出当前窗口真正需要的字段。
@@ -256,6 +449,8 @@ StatePatch 的实现位于 [src/hard_context_cutover/patch.py](/Users/huangxuan/
 ```
 
 这样新上下文窗口不需要加载全部历史，只拿到足够继续执行的当前状态。
+
+Projection 的目标是接近一个 “Sufficient Statistic”，也就是足够支持下一步决策的最小状态集合。它不追求完整，只追求“当前这一步够用”。
 
 ### Checkpoint
 
@@ -291,6 +486,123 @@ StatePatch 的实现位于 [src/hard_context_cutover/patch.py](/Users/huangxuan/
 ```
 
 Checkpoint 的实现位于 [src/hard_context_cutover/checkpoint.py](/Users/huangxuan/Documents/ChatGPT/长程agent上下午处理机制/src/hard_context_cutover/checkpoint.py)。
+
+Checkpoint 不是 Summary。它更像一个启动包：
+
+```text
+New Window Input =
+  State Projection
+  + Note
+  + Recent Archive Events
+```
+
+旧窗口可以关闭，新窗口用这个启动包恢复任务位置。
+
+## 数据落盘结构
+
+初始化后，默认会出现：
+
+```text
+.agent_state/
+├── state.json
+├── archive.jsonl
+└── checkpoint.json
+```
+
+### state.json
+
+`state.json` 是当前状态快照。每次 patch 合法提交后，它会被更新。
+
+适合高频读取：
+
+```text
+每一轮 Agent 开始前读取
+每一次 checkpoint 前读取
+每一次 projection 前读取
+```
+
+### archive.jsonl
+
+`archive.jsonl` 是追加式事件日志。每一行是一条原始事件。
+
+适合追溯：
+
+```text
+状态冲突时查 Archive
+缺少某个工具返回时查 Archive
+需要审计模型做过什么时查 Archive
+```
+
+### checkpoint.json
+
+`checkpoint.json` 是窗口切换时生成的启动包。
+
+它不保存全部历史，只保存新窗口启动需要的最小信息。
+
+## 一轮 Agent 如何运行
+
+下面是推荐的执行循环：
+
+```mermaid
+sequenceDiagram
+    participant Runtime as Agent Runtime
+    participant Store as state.json
+    participant LLM as LLM
+    participant Tools as Tools
+    participant Archive as archive.jsonl
+
+    Runtime->>Store: load state
+    Runtime->>Runtime: build projection
+    Runtime->>LLM: send projection + notes
+    LLM->>Tools: call tool
+    Tools-->>LLM: tool result
+    Runtime->>Archive: append tool.result
+    LLM-->>Runtime: StatePatch
+    Runtime->>Runtime: validate patch
+    Runtime->>Store: save merged state
+    Runtime->>Archive: append state.patch
+```
+
+如果 patch 校验失败：
+
+```mermaid
+sequenceDiagram
+    participant LLM as LLM
+    participant Runtime as Runtime
+    participant Store as state.json
+
+    LLM-->>Runtime: invalid StatePatch
+    Runtime->>Runtime: schema validation fails
+    Runtime-->>LLM: reject with reason
+    Note over Store: state.json unchanged
+    LLM-->>Runtime: corrected StatePatch
+```
+
+## 为什么不直接让模型重写完整 State
+
+假设 State 有 50 个字段，本轮只改了 2 个字段。
+
+如果让模型重写完整 State：
+
+```text
+旧 State 50 个字段
+  ↓
+LLM 重新生成完整 State
+  ↓
+可能漏字段、改错字段、幻觉字段
+```
+
+如果用 StatePatch：
+
+```text
+旧 State
+  +
+只包含 2 个字段变化的 Patch
+  ↓
+程序校验并合并
+```
+
+这就是 Minimal State Mutation。模型的写权限被限制在本轮真正发生变化的字段上。
 
 ## 目录结构
 
