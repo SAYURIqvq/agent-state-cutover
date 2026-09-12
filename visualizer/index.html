@@ -1,32 +1,31 @@
-<div id="cutover-vertical">
+<div id="window-cutover-map">
   <style>
-    #cutover-vertical {
+    #window-cutover-map {
       --bg: #f7f4ec;
       --ink: #18211f;
-      --muted: #65706b;
-      --line: #cfc8ba;
+      --muted: #626d68;
+      --line: #d7d0c2;
       --panel: #fffdf8;
-      --soft: #eef5f1;
-      --state: #176d5a;
-      --note: #90651a;
-      --archive: #5b519b;
+      --old: #355f8c;
+      --new: #2b7a68;
+      --memory: #5b519b;
       --patch: #a5484f;
-      --cutover: #2b6b84;
+      --cut: #2b6b84;
       --reject: #934034;
       color: var(--ink);
       background: var(--bg);
       border: 1px solid #ded8ca;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       margin: 0 auto;
-      max-width: 1120px;
+      max-width: 1160px;
       padding: 22px;
     }
 
-    #cutover-vertical * {
+    #window-cutover-map * {
       box-sizing: border-box;
     }
 
-    #cutover-vertical .header {
+    #window-cutover-map .header {
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto;
       gap: 16px;
@@ -36,32 +35,25 @@
       margin-bottom: 18px;
     }
 
-    #cutover-vertical h1 {
+    #window-cutover-map h1 {
       font-size: 28px;
       line-height: 1.15;
       letter-spacing: 0;
       margin: 0 0 8px;
     }
 
-    #cutover-vertical .lead {
+    #window-cutover-map .lead {
       color: var(--muted);
       font-size: 14px;
       line-height: 1.65;
       margin: 0;
-      max-width: 780px;
+      max-width: 820px;
     }
 
-    #cutover-vertical .toolbar {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-    }
-
-    #cutover-vertical button {
+    #window-cutover-map button {
       appearance: none;
       background: #ffffff;
-      border: 1px solid var(--line);
+      border: 1px solid #c9c2b5;
       color: var(--ink);
       cursor: pointer;
       font: inherit;
@@ -70,131 +62,130 @@
       padding: 8px 12px;
     }
 
-    #cutover-vertical button.primary {
-      background: var(--state);
-      border-color: var(--state);
+    #window-cutover-map button.primary {
+      background: var(--cut);
+      border-color: var(--cut);
       color: #ffffff;
     }
 
-    #cutover-vertical button[aria-pressed="true"] {
+    #window-cutover-map button[aria-pressed="true"] {
       box-shadow: inset 0 -3px 0 var(--patch);
     }
 
-    #cutover-vertical .map {
+    #window-cutover-map .toolbar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    #window-cutover-map .flow {
       display: grid;
-      grid-template-columns: minmax(220px, 1fr) 64px minmax(300px, 1.25fr) 64px minmax(220px, 1fr);
+      grid-template-columns: minmax(260px, 1fr) 88px minmax(260px, 1fr) 88px minmax(260px, 1fr);
       gap: 0;
       align-items: start;
+      position: relative;
     }
 
-    #cutover-vertical .left {
-      grid-column: 1;
+    #window-cutover-map .flow-lines {
+      height: 760px;
+      inset: 42px 0 auto 0;
+      pointer-events: none;
+      position: absolute;
+      width: 100%;
+      z-index: 0;
     }
 
-    #cutover-vertical .center {
-      grid-column: 3;
+    #window-cutover-map .flow-lines path {
+      fill: none;
+      stroke: #87918c;
+      stroke-width: 2;
     }
 
-    #cutover-vertical .right {
-      grid-column: 5;
+    #window-cutover-map .flow-lines path.dashed {
+      stroke-dasharray: 6 6;
     }
 
-    #cutover-vertical .memory,
-    #cutover-vertical .branch,
-    #cutover-vertical .step {
+    #window-cutover-map .lane-title {
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 750;
+      line-height: 1.3;
+      margin-bottom: 12px;
+      padding: 10px 12px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    #window-cutover-map .old-title {
+      background: var(--old);
+    }
+
+    #window-cutover-map .memory-title {
+      background: var(--memory);
+    }
+
+    #window-cutover-map .new-title {
+      background: var(--new);
+    }
+
+    #window-cutover-map .card {
       background: var(--panel);
       border: 2px solid var(--line);
+      min-height: 112px;
       padding: 14px;
+      margin-bottom: 18px;
+      position: relative;
+      z-index: 1;
     }
 
-    #cutover-vertical .memory {
-      margin-bottom: 14px;
-      min-height: 104px;
-    }
-
-    #cutover-vertical .memory.state {
-      border-color: var(--state);
-      margin-top: 0;
-    }
-
-    #cutover-vertical .memory.note {
-      border-color: var(--note);
-      margin-top: 138px;
-    }
-
-    #cutover-vertical .memory.archive {
-      border-color: var(--archive);
-      margin-top: 138px;
-    }
-
-    #cutover-vertical .memory.checkpoint {
-      border-color: var(--cutover);
-      margin-top: 438px;
-    }
-
-    #cutover-vertical .branch {
-      border-color: var(--reject);
-      margin-top: 338px;
-    }
-
-    #cutover-vertical .memory h2,
-    #cutover-vertical .branch h2,
-    #cutover-vertical .step h2 {
+    #window-cutover-map .card h2 {
       font-size: 16px;
       letter-spacing: 0;
       line-height: 1.35;
       margin: 0 0 8px;
     }
 
-    #cutover-vertical .memory p,
-    #cutover-vertical .branch p,
-    #cutover-vertical .step p {
+    #window-cutover-map .card p {
       color: var(--muted);
       font-size: 13px;
       line-height: 1.55;
       margin: 0;
     }
 
-    #cutover-vertical .step {
-      border-color: var(--state);
-      margin-bottom: 20px;
-      min-height: 106px;
-      position: relative;
-      transition: border-color 0.15s, background 0.15s;
-    }
-
-    #cutover-vertical .step.patch {
-      border-color: var(--patch);
-    }
-
-    #cutover-vertical .step.cutover {
-      border-color: var(--cutover);
-    }
-
-    #cutover-vertical .step.active,
-    #cutover-vertical .memory.active,
-    #cutover-vertical .branch.active {
+    #window-cutover-map .card.active {
       background: #eef7f3;
       border-width: 4px;
     }
 
-    #cutover-vertical .step::after {
-      content: "";
-      position: absolute;
-      left: 50%;
-      bottom: -22px;
-      width: 2px;
-      height: 20px;
-      background: #83908a;
+    #window-cutover-map .old .card {
+      border-color: var(--old);
     }
 
-    #cutover-vertical .step:last-child::after {
-      display: none;
+    #window-cutover-map .memory .card {
+      border-color: var(--memory);
     }
 
-    #cutover-vertical .badge {
+    #window-cutover-map .new .card {
+      border-color: var(--new);
+    }
+
+    #window-cutover-map .card.patch {
+      border-color: var(--patch);
+    }
+
+    #window-cutover-map .card.reject {
+      border-color: var(--reject);
+    }
+
+    #window-cutover-map .card.cut {
+      border-color: var(--cut);
+    }
+
+    #window-cutover-map .num {
       color: #ffffff;
-      background: var(--state);
+      background: var(--old);
       display: inline-block;
       font-size: 11px;
       line-height: 1;
@@ -202,112 +193,147 @@
       padding: 5px 7px;
     }
 
-    #cutover-vertical .step.patch .badge {
+    #window-cutover-map .memory .num {
+      background: var(--memory);
+    }
+
+    #window-cutover-map .new .num,
+    #window-cutover-map .card.cut .num {
+      background: var(--new);
+    }
+
+    #window-cutover-map .card.patch .num {
       background: var(--patch);
     }
 
-    #cutover-vertical .step.cutover .badge {
-      background: var(--cutover);
+    #window-cutover-map .card.reject .num {
+      background: var(--reject);
     }
 
-    #cutover-vertical .lane {
+    #window-cutover-map .arrow-col {
       min-height: 720px;
-      padding: 0 8px;
       position: relative;
+      padding: 0 10px;
     }
 
-    #cutover-vertical .connector {
-      border-top: 2px dashed #87918c;
+    #window-cutover-map .arrow {
+      border-top: 2px solid #828c86;
       color: var(--muted);
       font-size: 12px;
       line-height: 1.35;
-      padding-top: 7px;
-      text-align: center;
+      padding-top: 8px;
       position: absolute;
-      left: 0;
-      right: 0;
+      left: 8px;
+      right: 8px;
+      text-align: center;
     }
 
-    #cutover-vertical .c-state {
-      top: 44px;
+    #window-cutover-map .arrow::after {
+      content: "";
+      border-bottom: 6px solid transparent;
+      border-left: 9px solid #828c86;
+      border-top: 6px solid transparent;
+      position: absolute;
+      right: -2px;
+      top: -7px;
     }
 
-    #cutover-vertical .c-note {
-      top: 276px;
+    #window-cutover-map .arrow.back::after {
+      border-left: 0;
+      border-right: 9px solid #828c86;
+      left: -2px;
+      right: auto;
     }
 
-    #cutover-vertical .c-archive {
-      top: 486px;
+    #window-cutover-map .arrow.dashed {
+      border-top-style: dashed;
     }
 
-    #cutover-vertical .c-reject {
-      top: 372px;
+    #window-cutover-map .a-save-state {
+      top: 154px;
     }
 
-    #cutover-vertical .c-checkpoint {
-      top: 712px;
+    #window-cutover-map .a-save-archive {
+      top: 342px;
     }
 
-    #cutover-vertical .details {
+    #window-cutover-map .a-checkpoint {
+      top: 532px;
+    }
+
+    #window-cutover-map .a-load {
+      top: 102px;
+    }
+
+    #window-cutover-map .a-retry {
+      top: 284px;
+    }
+
+    #window-cutover-map .a-continue {
+      top: 476px;
+    }
+
+    #window-cutover-map .details {
       border-top: 1px solid #ded8ca;
+      display: grid;
+      grid-template-columns: 270px minmax(0, 1fr);
+      gap: 16px;
       margin-top: 20px;
       padding-top: 16px;
-      display: grid;
-      grid-template-columns: 260px minmax(0, 1fr);
-      gap: 16px;
       align-items: start;
     }
 
-    #cutover-vertical .steps-list,
-    #cutover-vertical .explain {
+    #window-cutover-map .step-list,
+    #window-cutover-map .explain {
       background: var(--panel);
       border: 1px solid #ded8ca;
       padding: 14px;
     }
 
-    #cutover-vertical .steps-list {
+    #window-cutover-map .step-list {
       display: grid;
       gap: 8px;
     }
 
-    #cutover-vertical .steps-list button {
+    #window-cutover-map .step-list button {
       text-align: left;
       width: 100%;
     }
 
-    #cutover-vertical .steps-list strong {
+    #window-cutover-map .step-list strong,
+    #window-cutover-map .explain h3 {
       display: block;
       font-size: 13px;
       line-height: 1.35;
-      margin-bottom: 4px;
+      margin: 0 0 4px;
     }
 
-    #cutover-vertical .steps-list span {
+    #window-cutover-map .step-list span {
       color: var(--muted);
       display: block;
       font-size: 12px;
       line-height: 1.35;
     }
 
-    #cutover-vertical .explain-grid {
+    #window-cutover-map .explain h2 {
+      font-size: 16px;
+      margin: 0 0 12px;
+    }
+
+    #window-cutover-map .explain-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 12px;
     }
 
-    #cutover-vertical .explain-box {
-      background: var(--soft);
+    #window-cutover-map .explain-box {
+      background: #eef5f1;
       border: 1px solid #d9dfdb;
       padding: 12px;
-      min-height: 110px;
+      min-height: 120px;
     }
 
-    #cutover-vertical .explain-box h3 {
-      font-size: 13px;
-      margin: 0 0 8px;
-    }
-
-    #cutover-vertical pre {
+    #window-cutover-map pre {
       background: #111816;
       color: #d8f6ed;
       font-size: 12px;
@@ -320,35 +346,24 @@
       word-break: break-word;
     }
 
-    @media (max-width: 880px) {
-      #cutover-vertical {
+    @media (max-width: 920px) {
+      #window-cutover-map {
         padding: 14px;
       }
 
-      #cutover-vertical .header,
-      #cutover-vertical .map,
-      #cutover-vertical .details,
-      #cutover-vertical .explain-grid {
+      #window-cutover-map .header,
+      #window-cutover-map .flow,
+      #window-cutover-map .details,
+      #window-cutover-map .explain-grid {
         display: grid;
         grid-template-columns: 1fr;
       }
 
-      #cutover-vertical .left,
-      #cutover-vertical .center,
-      #cutover-vertical .right {
-        grid-column: 1;
-      }
-
-      #cutover-vertical .lane {
+      #window-cutover-map .arrow-col {
         display: none;
       }
 
-      #cutover-vertical .memory,
-      #cutover-vertical .branch {
-        margin-top: 0;
-      }
-
-      #cutover-vertical .toolbar {
+      #window-cutover-map .toolbar {
         justify-content: flex-start;
       }
     }
@@ -356,8 +371,8 @@
 
   <div class="header">
     <div>
-      <h1>硬切上下文流程 / Hard Context Cutover</h1>
-      <p class="lead">主线从上到下看：模型只拿当前需要的信息执行一步，产出状态补丁；程序校验补丁，合法就写入 State，同时把原始证据放进 Archive；窗口快满时生成 Checkpoint，新窗口加载它继续。</p>
+      <h1>旧窗口到新窗口 / Window Cutover</h1>
+      <p class="lead">看这张图时，从左到右理解：旧窗口执行任务，但不把全部历史传给新窗口；它只把结构化状态、工作笔记和原始存档写到外部存储。新窗口启动时读取这些当前状态继续做。</p>
     </div>
     <div class="toolbar">
       <button type="button" id="reset">重置 / Reset</button>
@@ -365,99 +380,123 @@
     </div>
   </div>
 
-  <div class="map" aria-label="竖向硬切上下文流程图">
-    <div class="left">
-      <div class="memory state" data-step="state">
-        <h2>State 状态</h2>
-        <p>当前事实表。保存 step、环境、约束、server_ip 等下一步必须知道的信息。</p>
+  <div class="flow" aria-label="旧窗口切换到新窗口的流程图">
+    <svg class="flow-lines" viewBox="0 0 1160 760" aria-hidden="true">
+      <defs>
+        <marker id="line-arrow" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="9" markerHeight="9" orient="auto">
+          <path d="M 1 1 L 11 6 L 1 11 z" fill="#87918c"></path>
+        </marker>
+      </defs>
+      <path d="M 260 190 H 560" marker-end="url(#line-arrow)"></path>
+      <path d="M 260 378 H 560" marker-end="url(#line-arrow)"></path>
+      <path d="M 260 568 H 560" marker-end="url(#line-arrow)"></path>
+      <path d="M 848 128 H 1062" marker-end="url(#line-arrow)"></path>
+      <path d="M 848 318 H 1062" marker-end="url(#line-arrow)"></path>
+      <path d="M 848 568 H 1062" marker-end="url(#line-arrow)"></path>
+      <path class="dashed" d="M 260 318 C 382 318 438 292 560 292" marker-end="url(#line-arrow)"></path>
+      <path class="dashed" d="M 1062 432 C 968 432 940 318 848 318" marker-end="url(#line-arrow)"></path>
+    </svg>
+    <section class="old">
+      <div class="lane-title old-title">旧窗口 Window 1</div>
+      <div class="card active" data-step="old-run">
+        <span class="num">1</span>
+        <h2>执行一段任务</h2>
+        <p>Agent 在当前上下文里执行若干步，例如已经做到 Step 72。</p>
       </div>
-      <div class="memory note" data-step="note">
-        <h2>Note 笔记</h2>
-        <p>恢复任务用。记录已完成、待完成、下一步、重要提醒。</p>
+      <div class="card patch" data-step="patch">
+        <span class="num">2</span>
+        <h2>输出 State Patch</h2>
+        <p>每轮结束只写变化：set、append、unset，不重写完整状态。</p>
       </div>
-      <div class="memory archive" data-step="archive">
+      <div class="card patch" data-step="validate">
+        <span class="num">3</span>
+        <h2>校验 Patch</h2>
+        <p>程序检查字段名、类型、枚举和业务约束；不合法就拒绝重试。</p>
+      </div>
+      <div class="card cut" data-step="old-close">
+        <span class="num">6</span>
+        <h2>窗口快满，准备关闭</h2>
+        <p>旧窗口不再继续塞历史，也不把整段历史摘要搬过去。</p>
+      </div>
+    </section>
+
+    <div class="arrow-col">
+      <div class="arrow a-save-state">提交 State<br>commit facts</div>
+      <div class="arrow a-save-archive">追加 Archive<br>append evidence</div>
+      <div class="arrow a-checkpoint">生成 Checkpoint<br>make bundle</div>
+    </div>
+
+    <section class="memory">
+      <div class="lane-title memory-title">外部记忆 External Memory</div>
+      <div class="card" data-step="state">
+        <span class="num">4A</span>
+        <h2>State 当前状态</h2>
+        <p>像数据库当前表，保存下一步决策必须知道的事实。</p>
+      </div>
+      <div class="card" data-step="note">
+        <span class="num">4B</span>
+        <h2>Note 工作笔记</h2>
+        <p>记录 completed、pending、next、important，帮助恢复语境。</p>
+      </div>
+      <div class="card" data-step="archive">
+        <span class="num">4C</span>
         <h2>Archive 原始存档</h2>
-        <p>完整证据库。用户原话、工具返回、错误日志、文件修改、状态补丁都追加保存。</p>
+        <p>完整保存用户消息、工具返回、错误日志和状态补丁。</p>
       </div>
+      <div class="card cut" data-step="checkpoint">
+        <span class="num">7</span>
+        <h2>Checkpoint 启动包</h2>
+        <p>State Projection + Note + Archive 指针，交给新窗口。</p>
+      </div>
+    </section>
+
+    <div class="arrow-col">
+      <div class="arrow a-load">加载 Checkpoint<br>load bundle</div>
+      <div class="arrow dashed a-retry back">失败回旧窗口<br>retry patch</div>
+      <div class="arrow a-continue">继续任务<br>continue work</div>
     </div>
 
-    <div class="lane">
-      <div class="connector c-state">读 State<br>read facts</div>
-      <div class="connector c-note">读 Note<br>read notes</div>
-      <div class="connector c-archive">写 Archive<br>append evidence</div>
-    </div>
-
-    <div class="center">
-      <div class="step active" data-step="context">
-        <span class="badge">1</span>
-        <h2>加载当前状态 / Load Current State</h2>
-        <p>不读完整历史，只读 State 投影 + Note + 少量 Archive 指针。</p>
+    <section class="new">
+      <div class="lane-title new-title">新窗口 Window 2</div>
+      <div class="card" data-step="new-start">
+        <span class="num">8</span>
+        <h2>加载当前状态</h2>
+        <p>新窗口只拿足够继续执行的信息，不需要读旧窗口全部历史。</p>
       </div>
-      <div class="step" data-step="work">
-        <span class="badge">2</span>
-        <h2>执行一步任务 / Execute One Step</h2>
-        <p>Agent 根据当前最小充分信息推理，调用工具，得到工具结果。</p>
+      <div class="card" data-step="projection">
+        <span class="num">9</span>
+        <h2>得到 State Projection</h2>
+        <p>例如 step=73、environment=staging、server_ip、用户约束。</p>
       </div>
-      <div class="step patch" data-step="patch">
-        <span class="badge">3</span>
-        <h2>生成状态补丁 / Produce State Patch</h2>
-        <p>模型不重写完整 State，只输出本轮改变了哪些字段。</p>
+      <div class="card" data-step="new-run">
+        <span class="num">10</span>
+        <h2>从下一步继续</h2>
+        <p>继续配置 Nginx、运行测试，然后重复同样的状态维护流程。</p>
       </div>
-      <div class="step patch" data-step="validate">
-        <span class="badge">4</span>
-        <h2>校验补丁 / Validate Patch</h2>
-        <p>程序检查字段名、类型、枚举、业务约束。合法才允许提交。</p>
+      <div class="card reject" data-step="reject">
+        <span class="num">分支</span>
+        <h2>Patch 不合法</h2>
+        <p>如果模型写错字段或类型，State 不变，要求它重新输出 Patch。</p>
       </div>
-      <div class="step" data-step="commit">
-        <span class="badge">5</span>
-        <h2>提交状态 / Commit State</h2>
-        <p>合法 patch 合并进 State；工具结果和 patch 追加写入 Archive。</p>
-      </div>
-      <div class="step cutover" data-step="project">
-        <span class="badge">6</span>
-        <h2>状态投影 / State Projection</h2>
-        <p>从 Global State 里挑出下一步真正需要的字段，形成干净上下文。</p>
-      </div>
-      <div class="step cutover" data-step="checkpoint">
-        <span class="badge">7</span>
-        <h2>硬切窗口 / Hard Cutover</h2>
-        <p>Context 快满时生成 Checkpoint，新窗口加载它继续。</p>
-      </div>
-    </div>
-
-    <div class="lane">
-      <div class="connector c-reject">非法 patch<br>reject and retry</div>
-      <div class="connector c-checkpoint">新窗口<br>fresh window</div>
-    </div>
-
-    <div class="right">
-      <div class="branch" data-step="reject">
-        <h2>拒绝重试 / Reject Retry</h2>
-        <p>如果 patch 写了未知字段、类型错误或违反约束，State 不变，要求模型重新输出。</p>
-      </div>
-      <div class="memory checkpoint" data-step="checkpoint">
-        <h2>Checkpoint 检查点</h2>
-        <p>新窗口启动包：State Projection + Note + Archive 指针。</p>
-      </div>
-    </div>
+    </section>
   </div>
 
   <div class="details">
-    <div class="steps-list" id="step-list"></div>
+    <div class="step-list" id="step-list"></div>
     <div class="explain">
-      <h2 id="detail-title">加载当前状态 / Load Current State</h2>
+      <h2 id="detail-title">1. 旧窗口执行任务</h2>
       <div class="explain-grid">
         <div class="explain-box">
-          <h3>读什么 / Input</h3>
-          <pre id="input"></pre>
+          <h3>这一步在干嘛</h3>
+          <pre id="meaning"></pre>
         </div>
         <div class="explain-box">
-          <h3>做什么 / Process</h3>
-          <pre id="process"></pre>
+          <h3>保存或读取什么</h3>
+          <pre id="data"></pre>
         </div>
         <div class="explain-box">
-          <h3>写什么 / Output</h3>
-          <pre id="output"></pre>
+          <h3>为什么重要</h3>
+          <pre id="why"></pre>
         </div>
       </div>
     </div>
@@ -465,151 +504,150 @@
 
   <script>
     (function () {
-      const root = document.getElementById("cutover-vertical");
-      const steps = {
-        context: {
-          title: "1. 加载当前状态 / Load Current State",
-          short: "只加载当前需要的信息",
-          input: ["state.json", "notes", "recent archive pointers"],
-          process: "做 State Projection，把全局状态投影成当前任务需要的最小上下文。",
-          output: {
-            "task.current_step": 72,
-            "environment": "staging",
-            "constraints": ["禁止修改 production"],
-            "next": "部署服务器"
-          }
-        },
-        work: {
-          title: "2. 执行一步任务 / Execute One Step",
-          short: "模型推理并调用工具",
-          input: ["State Projection", "Note"],
-          process: "Agent 执行一个边界清楚的小任务，例如部署 staging 服务器。",
-          output: {
-            "tool.result": {
-              ok: true,
-              server_ip: "10.0.0.8"
-            }
-          }
+      const root = document.getElementById("window-cutover-map");
+      const details = {
+        "old-run": {
+          title: "1. 旧窗口执行任务 / Window 1 Runs",
+          short: "旧窗口正常工作，直到上下文变长。",
+          meaning: "Agent 在 Window 1 里执行任务。例如部署系统已经做到 Step 72。",
+          data: {
+            context: ["用户目标", "最近工具结果", "当前 State Projection"],
+            not_loaded: "不会把全部历史都塞进来"
+          },
+          why: "旧窗口只是工作桌面，不是长期记忆。真正要留下的是可执行事实。"
         },
         patch: {
-          title: "3. 生成状态补丁 / Produce State Patch",
-          short: "只写本轮变化",
-          input: ["tool.result", "current state"],
-          process: "模型只描述改变的字段，避免重写完整 State 时误删或幻觉。",
-          output: {
+          title: "2. 输出 State Patch / Produce Patch",
+          short: "模型只写本轮变化。",
+          meaning: "每一轮结束，模型输出 State Patch，而不是重写整个 State。",
+          data: {
             set: {
               "task.current_step": 73,
-              "infra.server_ip": "10.0.0.8",
-              "task.next": "配置 Nginx"
+              "infra.server_ip": "10.0.0.8"
             },
             append: {
-              "task.completed": ["服务器部署完成"],
-              "notes.pending": ["Nginx 尚未配置"]
-            }
-          }
-        },
-        validate: {
-          title: "4. 校验补丁 / Validate Patch",
-          short: "程序守住状态一致性",
-          input: ["StatePatch", "StateSchema"],
-          process: "检查字段是否存在、类型是否正确、枚举是否合法、同一字段是否被重复操作。",
-          output: {
-            valid: "merge into State",
-            invalid: "reject and retry"
-          }
-        },
-        commit: {
-          title: "5. 提交状态 / Commit State",
-          short: "状态更新，证据归档",
-          input: ["validated patch", "tool.result"],
-          process: "合法 patch 合并进 state.json；原始工具结果和 patch 追加进 archive.jsonl。",
-          output: {
-            "state.json": "current_step = 73, server_ip = 10.0.0.8",
-            "archive.jsonl": ["tool.result", "state.patch"]
-          }
-        },
-        project: {
-          title: "6. 状态投影 / State Projection",
-          short: "给下一步最小充分信息",
-          input: ["Global State"],
-          process: "从完整 State 中选择当前决策需要的字段，减少噪音和上下文占用。",
-          output: {
-            projection: ["task.current_step", "environment", "server_ip", "constraints", "task.next"]
-          }
-        },
-        checkpoint: {
-          title: "7. 硬切窗口 / Hard Cutover",
-          short: "新窗口从检查点继续",
-          input: ["State Projection", "Note", "Archive pointers"],
-          process: "旧窗口结束，新窗口加载 checkpoint 继续执行，不依赖对旧窗口的有损摘要。",
-          output: {
-            "checkpoint.json": {
-              state_projection: "minimum facts",
-              notes: "completed / pending / next / important",
-              archive_tail: "recent evidence pointers"
-            }
-          }
-        },
-        reject: {
-          title: "分支：拒绝重试 / Reject Retry",
-          short: "非法 patch 不会写坏状态",
-          input: {
-            bad_patch: {
-              set: {
-                "task.current_step": "不知道"
-              }
+              "task.completed": ["服务器部署完成"]
             }
           },
-          process: "Schema 发现 current_step 不是 int，拒绝提交，并要求模型重新输出合法 patch。",
-          output: {
-            state_changed: false,
-            retry: true
-          }
+          why: "最小状态变更可以减少误删字段、覆盖正确状态和幻觉字段。"
+        },
+        validate: {
+          title: "3. 校验 Patch / Validate Patch",
+          short: "程序决定能不能写入状态。",
+          meaning: "程序用 Schema 检查 patch。字段不存在、类型错误、枚举不合法都会拒绝。",
+          data: {
+            checks: ["field exists", "type is valid", "enum is allowed", "business constraints"]
+          },
+          why: "LLM 负责推理，程序负责状态一致性。不能让模型直接覆盖状态。"
         },
         state: {
-          title: "State 状态",
-          short: "当前事实表",
-          input: "每一轮从这里读取当前事实。",
-          process: "State 只保存决策必须知道的事实，不保存完整历史。",
-          output: {
+          title: "4A. State 当前状态",
+          short: "下一步决策必须知道的事实。",
+          meaning: "State 是当前事实表，像数据库里的当前状态。",
+          data: {
             current_step: 73,
             environment: "staging",
             server_ip: "10.0.0.8",
             constraints: ["禁止修改 production"]
-          }
+          },
+          why: "新窗口只要读 State，就知道现在做到哪里、系统处于什么状态。"
         },
         note: {
-          title: "Note 笔记",
-          short: "恢复任务语境",
-          input: "每轮可以追加少量工作笔记。",
-          process: "记录 Completed / Pending / Next / Important。",
-          output: {
-            completed: ["服务器已部署"],
-            pending: ["配置 Nginx"],
+          title: "4B. Note 工作笔记",
+          short: "让新窗口快速恢复语境。",
+          meaning: "Note 记录完成了什么、还没完成什么、下一步做什么、哪些提醒不能忘。",
+          data: {
+            completed: ["数据库迁移完成", "服务器部署完成"],
+            pending: ["配置 Nginx", "运行测试"],
             next: ["验证 HTTPS"],
             important: ["不能修改 production"]
-          }
+          },
+          why: "State 管事实，Note 管任务语境和决策理由。"
         },
         archive: {
-          title: "Archive 原始存档",
-          short: "可追溯证据",
-          input: ["user.message", "tool.result", "state.patch", "file.change"],
-          process: "追加写 JSONL。正常不塞进上下文，只有冲突或缺事实时检索。",
-          output: "archive.jsonl"
+          title: "4C. Archive 原始存档",
+          short: "所有原始证据都在这里。",
+          meaning: "Archive 追加保存原始事件：用户消息、工具调用、工具返回、错误日志、patch。",
+          data: ["user.message", "tool.call", "tool.result", "state.patch", "file.change"],
+          why: "如果 State 或 Note 出错，可以回 Archive 找原始证据修正。"
+        },
+        "old-close": {
+          title: "6. 旧窗口准备关闭",
+          short: "不再靠摘要续航。",
+          meaning: "当 Window 1 上下文快满，系统停止继续堆历史。",
+          data: {
+            saved: ["State", "Note", "Archive"],
+            avoided: "不把 Window 1 的完整历史压缩成 Summary 再搬过去"
+          },
+          why: "避免摘要丢失路径、ID、约束、工具返回码等可执行事实。"
+        },
+        checkpoint: {
+          title: "7. 生成 Checkpoint",
+          short: "新窗口启动包。",
+          meaning: "Checkpoint 是给 Window 2 的启动包。",
+          data: {
+            state_projection: ["current_step", "environment", "server_ip", "constraints", "next"],
+            notes: "completed / pending / next / important",
+            archive_pointers: "recent event ids"
+          },
+          why: "新窗口不需要知道全部过去，只需要足够准确的当前状态。"
+        },
+        "new-start": {
+          title: "8. 新窗口加载状态 / Window 2 Starts",
+          short: "Window 2 从 checkpoint 开始。",
+          meaning: "Window 2 打开时，直接加载 Checkpoint。",
+          data: ["State Projection", "Note", "Archive pointers"],
+          why: "这就是 Hard Context Cutover：直接切新窗口，不把旧窗口历史塞进来。"
+        },
+        projection: {
+          title: "9. 得到 State Projection",
+          short: "只拿下一步需要的字段。",
+          meaning: "从 Global State 里投影出当前任务需要的最小字段。",
+          data: {
+            projection: {
+              current_step: 73,
+              environment: "staging",
+              server_ip: "10.0.0.8",
+              next: "配置 Nginx"
+            }
+          },
+          why: "上下文越干净，模型越不容易被旧历史噪音带偏。"
+        },
+        "new-run": {
+          title: "10. 新窗口继续任务",
+          short: "继续下一步，然后循环。",
+          meaning: "Window 2 从 Step 73 继续配置 Nginx、运行测试。",
+          data: {
+            next_action: "配置 Nginx 并验证 HTTPS",
+            loop: "执行后继续输出 State Patch"
+          },
+          why: "长程任务靠外部状态一段一段接力，而不是靠一个无限长上下文。"
+        },
+        reject: {
+          title: "分支：Patch 不合法",
+          short: "拒绝重试，不污染状态。",
+          meaning: "如果模型输出 current_step = '不知道' 或未知字段，程序拒绝提交。",
+          data: {
+            bad_patch: {
+              "task.current_step": "不知道"
+            },
+            result: "reject and retry"
+          },
+          why: "这个分支保护 State 不被模型写坏。"
         }
       };
 
-      const order = ["context", "work", "patch", "validate", "commit", "project", "checkpoint", "reject"];
-      let active = "context";
+      const order = ["old-run", "patch", "validate", "state", "note", "archive", "old-close", "checkpoint", "new-start", "projection", "new-run", "reject"];
+      let active = "old-run";
 
       const title = root.querySelector("#detail-title");
-      const input = root.querySelector("#input");
-      const process = root.querySelector("#process");
-      const output = root.querySelector("#output");
+      const meaning = root.querySelector("#meaning");
+      const data = root.querySelector("#data");
+      const why = root.querySelector("#why");
       const list = root.querySelector("#step-list");
-      const nodes = Array.from(root.querySelectorAll("[data-step]"));
+      const cards = Array.from(root.querySelectorAll("[data-step]"));
 
-      function text(value) {
+      function format(value) {
         return typeof value === "string" ? value : JSON.stringify(value, null, 2);
       }
 
@@ -621,7 +659,7 @@
       function renderList() {
         list.innerHTML = "";
         order.forEach((key) => {
-          const item = steps[key];
+          const item = details[key];
           const button = document.createElement("button");
           button.type = "button";
           button.setAttribute("aria-pressed", String(key === active));
@@ -632,23 +670,23 @@
       }
 
       function render() {
-        const item = steps[active];
+        const item = details[active];
         title.textContent = item.title;
-        input.textContent = text(item.input);
-        process.textContent = text(item.process);
-        output.textContent = text(item.output);
-        nodes.forEach((node) => node.classList.toggle("active", node.dataset.step === active));
+        meaning.textContent = format(item.meaning);
+        data.textContent = format(item.data);
+        why.textContent = format(item.why);
+        cards.forEach((card) => card.classList.toggle("active", card.dataset.step === active));
         renderList();
       }
 
-      nodes.forEach((node) => {
-        node.addEventListener("click", () => setActive(node.dataset.step));
+      cards.forEach((card) => {
+        card.addEventListener("click", () => setActive(card.dataset.step));
       });
 
-      root.querySelector("#reset").addEventListener("click", () => setActive("context"));
+      root.querySelector("#reset").addEventListener("click", () => setActive("old-run"));
       root.querySelector("#next").addEventListener("click", () => {
-        const nextIndex = (order.indexOf(active) + 1) % order.length;
-        setActive(order[nextIndex]);
+        const index = order.indexOf(active);
+        setActive(order[(index + 1) % order.length]);
       });
 
       render();
